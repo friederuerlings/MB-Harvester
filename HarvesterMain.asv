@@ -44,44 +44,44 @@ dData.mass.m10 = 1.81e+4;      % Masse Body 10
 
 % Inertia-Matrix
 dData.mMat.mm_1_1 = ...                  % Inertia-Matrix Body 1
-    [5.9723210e+04 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.0290949e+05 0.0000000e+00;...
+    [5.9723210e+04 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 2.0290949e+05 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 1.5841635e+05];
 dData.mMat.mm_2_2 = ...                  % Inertia-Matrix Body 2
-    [2.3900122e+02 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.4195990e+02 0.0000000e+00;...
+    [2.3900122e+02 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 2.4195990e+02 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 2.3900123e+02];
 dData.mMat.mm_3_3 =...                   % Inertia-Matrix Body 3
-    [1.0466667e+01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 3.2760667e+03 0.0000000e+00;...
+    [1.0466667e+01 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 3.2760667e+03 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 3.2760667e+03];
 dData.mMat.mm_4_4 =...                   % Inertia-Matrix Body 4
-    [3.1792500e+01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 1.6055213e+03 0.0000000e+00;...
+    [3.1792500e+01 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 1.6055213e+03 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 1.6055213e+03];
 dData.mMat.mm_5_5 =...                   % Inertia-Matrix Body 5
-    [4.1866667e+00 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.1142667e+02 0.0000000e+00;...
+    [4.1866667e+00 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 2.1142667e+02 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 2.1142667e+02];
 dData.mMat.mm_6_6 =...                   % Inertia-Matrix Body 6
-    [6.2800000e-01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 1.0205000e+00 0.0000000e+00;...
+    [6.2800000e-01 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 1.0205000e+00 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 1.0205000e+00];
 dData.mMat.mm_7_7 =...                   % Inertia-Matrix Body 7
-    [8.3733333e-01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.0933333e+00 0.0000000e+00;...
+    [8.3733333e-01 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 2.0933333e+00 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 2.0933333e+00];
 dData.mMat.mm_8_8 =...                   % Inertia-Matrix Body 8
-    [1.0597500e+01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 6.4173750e+01 0.0000000e+00;...
+    [1.0597500e+01 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 6.4173750e+01 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 6.4173750e+01];
 dData.mMat.mm_9_9 =...                   % Inertia-Matrix Body 9
-    [3.2205222e+02 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 3.2205223e+02 0.0000000e+00;...
+    [3.2205222e+02 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 3.2205223e+02 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 4.9807341e+02];
 dData.mMat.mm_10_10 =...                 % Inertia-Matrix Body 10
-    [1.1102300e+03 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 5.4933735e+04 0.0000000e+00;...
+    [1.1102300e+03 0.0000000e+00 0.0000000e+00...
+    0.0000000e+00 5.4933735e+04 0.0000000e+00...
     0.0000000e+00 0.0000000e+00 5.4933720e+04];
 
 %% Rotation-Matrix
@@ -99,15 +99,15 @@ rotMat.T98 = [cos(q_8(t)) -sin(q_8(t)) 0; sin(q_8(t)) cos(q_8(t)) 0; 0 0 1];
 rotMat.T109 = [1 0 0; 0 1 0; 0 0 1];
 
 % rotation matrix in inertial CS
-rotMat.T20 = simplify(rotMat.rotMat.T10*rotMat.T21);
-rotMat.T30 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32);
-rotMat.T40 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43);
-rotMat.T50 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54);
-rotMat.T60 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65);
-rotMat.T70 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76);
-rotMat.T80 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87);
-rotMat.T90 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87*rotMat.T98);
-rotMat.rotMat.T100 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87*rotMat.T98*rotMat.T109);
+rotMat.T20 = simplify(rotMat.T10*rotMat.T21);
+rotMat.T30 = simplify(rotMat.T10*rotMat.T21*rotMat.T32);
+rotMat.T40 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43);
+rotMat.T50 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54);
+rotMat.T60 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65);
+rotMat.T70 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76);
+rotMat.T80 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87);
+rotMat.T90 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87*rotMat.T98);
+rotMat.T100 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87*rotMat.T98*rotMat.T109);
 
 %% Joints
 
@@ -140,9 +140,9 @@ cog.SP10_10 = [0; 0; 0];
 %% Koordinatensysteme & Schwerpunkte im Inertial-Frame
 
 % Koordinatensysteme (Position) im Inertial Frame
-coordSys.KS_1 = joint.J0_0+rotMat.rotMat.T10*joint.J1_0+rotMat.rotMat.T10*joint.J1_1;
-coordSys.KS_2 = coordSys.KS_1+rotMat.rotMat.T10*joint.J1_2;
-coordSys.KS_3 = simplify(coordSys.KS_2+rotMat.rotMat.T20*joint.J2_2);
+coordSys.KS_1 = joint.J0_0+rotMat.T10*joint.J1_0+rotMat.T10*joint.J1_1;
+coordSys.KS_2 = coordSys.KS_1+rotMat.T10*joint.J1_2;
+coordSys.KS_3 = simplify(coordSys.KS_2+rotMat.T20*joint.J2_2);
 coordSys.KS_4 = simplify(coordSys.KS_3+rotMat.T30*joint.J3_3);
 coordSys.KS_5 = simplify(coordSys.KS_4+rotMat.T40*joint.J4_4+rotMat.T40*[q_4(t); 0; 0]);
 coordSys.KS_6 = simplify(coordSys.KS_5+rotMat.T50*joint.J5_5);
@@ -152,8 +152,8 @@ coordSys.KS_9 = simplify(coordSys.KS_8+rotMat.T80*joint.J8_8);
 coordSys.KS_10 = simplify(coordSys.KS_9+rotMat.T90*joint.J10_9+rotMat.T90*[q_9(t); 0; 0]);
 
 % Schwerpunkte (Position) im Inertial-Frame
-cog.SP_1_0 = joint.J0_0+rotMat.rotMat.T10*joint.J1_0+rotMat.rotMat.T10*joint.J1_1+rotMat.rotMat.T10*cog.SP1_1;
-cog.SP_2_0 = coordSys.KS_1+rotMat.rotMat.T10*joint.J1_2+rotMat.rotMat.T10*cog.SP2_2;
+cog.SP_1_0 = simplify(jointJ0_0+rotMat.T10*joint.J1_0+rotMat.T10*joint.J1_1+rotMat.T10*cog.SP1_1);
+cog.SP_2_0 = simplify(coordSys.KS_1+rotMat.T10*J1_2+rotMat.T10*cog.SP2_2);
 cog.SP_3_0 = simplify(coordSys.KS_3+rotMat.T30*cog.SP3_3);
 cog.SP_4_0 = simplify(coordSys.KS_4+rotMat.T40*cog.SP4_4);
 cog.SP_5_0 = simplify(coordSys.KS_5+rotMat.T50*cog.SP5_5);
@@ -161,132 +161,149 @@ cog.SP_6_0 = simplify(coordSys.KS_6+rotMat.T60*cog.SP6_6);
 cog.SP_7_0 = simplify(coordSys.KS_7+rotMat.T70*cog.SP7_7);
 cog.SP_8_0 = simplify(coordSys.KS_8+rotMat.T80*cog.SP8_8);
 cog.SP_9_0 = simplify(coordSys.KS_9+rotMat.T90*cog.SP9_9);
-cog.SP_10_0 = simplify(coordSys.KS_10+rotMat.rotMat.T100*cog.SP10_10);
+cog.SP_10_0 = simplify(coordSys.KS_10+rotMat.T100*cog.SP10_10);
 
 % Schwerpunkte (Geschwindigkeit)
 vcog.vSP_1_0 = simplify(diff(cog.SP_1_0, t));
 vcog.vSP_2_0 = simplify(diff(cog.SP_2_0, t));
-vcog.vSP_3_0 = simplify(diff(cog.SP_3_0, t));
-vcog.vSP_4_0 = simplify(diff(cog.SP_4_0, t));
-vcog.vSP_5_0 = simplify(diff(cog.SP_5_0, t));
-vcog.vSP_6_0 = simplify(diff(cog.SP_6_0, t));
-vcog.vSP_7_0 = simplify(diff(cog.SP_7_0, t));
-vcog.vSP_8_0 = simplify(diff(cog.SP_8_0, t));
-vcog.vSP_9_0 = simplify(diff(cog.SP_9_0, t));
-vcog.vSP_10_0 = simplify(diff(cog.SP_10_0, t));
+vcog.vSP_3_0 = simplify(diff(SP_3_0, t));
+vcog.vSP_4_0 = simplify(diff(SP_4_0, t));
+vcog.vSP_5_0 = simplify(diff(SP_5_0, t));
+vcog.vSP_6_0 = simplify(diff(SP_6_0, t));
+vcog.vSP_7_0 = simplify(diff(SP_7_0, t));
+vcog.vSP_8_0 = simplify(diff(SP_8_0, t));
+vcog.vSP_9_0 = simplify(diff(SP_9_0, t));
+vcog.vSP_10_0 = simplify(diff(SP_10_0, t));
 
 % Baumstamm darstellen (Endpunkte)
-BS_1 = coordSys.KS_10 + rotMat.rotMat.T100*[3; 0; 0];
-BS_2 = coordSys.KS_10 + rotMat.rotMat.T100*[-3; 0; 0];
+BS_1 = KS_10 + T100*[3; 0; 0];
+BS_2 = KS_10 + T100*[-3; 0; 0];
 
+runtime.cs = toc;
+disp(strcat('Runtime for Coordinate-Systems and COG:', 32, num2str(runtime.cs)));
+runtime.sum = runtime.sum + runtime.cs;
+tic;
 
 %% Energien berechnen
 
 % Kinetische Energie (Translation)
 T_trans = simplify( ...
-    0.5*dData.mass.m1*transpose(vcog.vSP_1_0)*vcog.vSP_1_0+...    % Body 1
-    0.5*dData.mass.m2*transpose(vcog.vSP_2_0)*vcog.vSP_2_0+...    % Body 2
-    0.5*dData.mass.m3*transpose(vcog.vSP_3_0)*vcog.vSP_3_0+...    % Body 3
-    0.5*dData.mass.m4*transpose(vcog.vSP_4_0)*vcog.vSP_4_0+...    % Body 4
-    0.5*dData.mass.m5*transpose(vcog.vSP_5_0)*vcog.vSP_5_0+...    % Body 5
-    0.5*dData.mass.m6*transpose(vcog.vSP_6_0)*vcog.vSP_6_0+...    % Body 6
-    0.5*dData.mass.m7*transpose(vcog.vSP_7_0)*vcog.vSP_7_0+...    % Body 7
-    0.5*dData.mass.m8*transpose(vcog.vSP_8_0)*vcog.vSP_8_0+...    % Body 8
-    0.5*dData.mass.m9*transpose(vcog.vSP_9_0)*vcog.vSP_9_0+...    % Body 9
-    0.5*dData.mass.m10*transpose(vcog.vSP_10_0)*vcog.vSP_10_0);   % Body 10
+    0.5*m_1*transpose(vcog.vSP_1_0)*vcog.vSP_1_0+...  % Body 1
+    0.5*m_2*transpose(vcog.vSP_2_0)*vcog.vSP_2_0+...  % Body 2
+    0.5*m_3*transpose(vcog.vSP_3_0)*vcog.vSP_3_0+...  % Body 3
+    0.5*m_4*transpose(vcog.vSP_4_0)*vcog.vSP_4_0+...  % Body 4
+    0.5*m_5*transpose(vcog.vSP_5_0)*vcog.vSP_5_0+...  % Body 5
+    0.5*m_6*transpose(vcog.vSP_6_0)*vcog.vSP_6_0+...  % Body 6
+    0.5*m_7*transpose(vcog.vSP_7_0)*vcog.vSP_7_0+...  % Body 7
+    0.5*m_8*transpose(vcog.vSP_8_0)*vcog.vSP_8_0+...  % Body 8
+    0.5*m_9*transpose(vcog.vSP_9_0)*vcog.vSP_9_0+...  % Body 9
+    0.5*m_10*transpose(vcog.vSP_10_0)*vcog.vSP_10_0);   % Body 10
+
+runtime.trans = toc;
+disp(strcat('Runtime for Kinetic Trans:', 32, num2str(runtime.trans)));
+runtime.sum = runtime.sum + runtime.trans;
+tic;
 
 % Kinetische Energie (Rotation)
 
-% Notation: angVel.omega_a_b_c ^= angVel.omega von Körper a in Verhältnis zu Körper b im
+% Notation: omega_a_b_c ^= omega von Körper a in Verhältnis zu Körper b im
 % Bezug auf Koordinatensystem c
 
 % Body 1 - Keine Rotation im Verhältnis zu KS0
-angVel.omega_1_0_0 = [0; 0; 0];
+omega_1_0_0 = [0; 0; 0];
 
 % Body 2 - Rotation um y_1
-angVel.omega_2_1_1 = [0; diff(q_1(t), t); 0];
-angVel.omega_2_1_0 = rotMat.T10 * angVel.omega_2_1_1;
-angVel.omega_2_0_0 = simplify(angVel.omega_1_0_0 + angVel.omega_2_1_0);
+omega_2_1_1 = [0; diff(q_1(t), t); 0];
+omega_2_1_0 = T10 * omega_2_1_1;
+omega_2_0_0 = simplify(omega_1_0_0 + omega_2_1_0);
 
 % Body 3 - Rotation um z_2
-angVel.omega_3_2_2 = [0; 0; diff(q_2(t), t)];
-angVel.omega_3_2_0 = rotMat.T20 * angVel.omega_3_2_2;
-angVel.omega_3_0_0 = simplify(angVel.omega_2_0_0 + angVel.omega_3_2_0);
+omega_3_2_2 = [0; 0; diff(q_2(t), t)];
+omega_3_2_0 = T20 * omega_3_2_2;
+omega_3_0_0 = simplify(omega_2_0_0 + omega_3_2_0);
 
 % Body 4 - Rotation um z_3
-angVel.omega_4_3_3 = [0; 0; diff(q_3(t), t)];
-angVel.omega_4_3_0 = rotMat.T30 * angVel.omega_4_3_3;
-angVel.omega_4_0_0 = simplify(angVel.omega_3_0_0 + angVel.omega_4_3_0);
+omega_4_3_3 = [0; 0; diff(q_3(t), t)];
+omega_4_3_0 = T30 * omega_4_3_3;
+omega_4_0_0 = simplify(omega_3_0_0 + omega_4_3_0);
 
 % Body 5 - Keine Rotation im Verhältnis zu KS4
-angVel.omega_5_4_4 = [0; 0; 0];
-angVel.omega_5_4_0 = rotMat.T40 * angVel.omega_5_4_4;
-angVel.omega_5_0_0 = simplify(angVel.omega_4_0_0 + angVel.omega_5_4_0);
+omega_5_4_4 = [0; 0; 0];
+omega_5_4_0 = T40 * omega_5_4_4;
+omega_5_0_0 = simplify(omega_4_0_0 + omega_5_4_0);
 
 % Body 6 - Rotation um z_5
-angVel.omega_6_5_5 = [0; 0; diff(q_5(t), t)];
-angVel.omega_6_5_0 = rotMat.T50 * angVel.omega_6_5_5;
-angVel.omega_6_0_0 = simplify(angVel.omega_5_0_0 + angVel.omega_6_5_0);
+omega_6_5_5 = [0; 0; diff(q_5(t), t)];
+omega_6_5_0 = T50 * omega_6_5_5;
+omega_6_0_0 = simplify(omega_5_0_0 + omega_6_5_0);
 
 % Body 7 - Rotation um y_6
-angVel.omega_7_6_6 = [0; diff(q_6(t), t); 0];
-angVel.omega_7_6_0 = rotMat.T60 * angVel.omega_7_6_6;
-angVel.omega_7_0_0 = simplify(angVel.omega_6_0_0 + angVel.omega_7_6_0);
+omega_7_6_6 = [0; diff(q_6(t), t); 0];
+omega_7_6_0 = T60 * omega_7_6_6;
+omega_7_0_0 = simplify(omega_6_0_0 + omega_7_6_0);
 
 % Body 8 - Rotation um x_7
-angVel.omega_8_7_7 = [diff(q_7(t), t); 0; 0];
-angVel.omega_8_7_0 = rotMat.T70 * angVel.omega_8_7_7;
-angVel.omega_8_0_0 = simplify(angVel.omega_7_0_0 + angVel.omega_8_7_0);
+omega_8_7_7 = [diff(q_7(t), t); 0; 0];
+omega_8_7_0 = T70 * omega_8_7_7;
+omega_8_0_0 = simplify(omega_7_0_0 + omega_8_7_0);
 
 % Body 9 - Rotation um z_8
-angVel.omega_9_8_8 = [0; 0; diff(q_8(t), t)];
-angVel.omega_9_8_0 = rotMat.T80 * angVel.omega_9_8_8;
-angVel.omega_9_0_0 = simplify(angVel.omega_8_0_0 + angVel.omega_9_8_0);
+omega_9_8_8 = [0; 0; diff(q_8(t), t)];
+omega_9_8_0 = T80 * omega_9_8_8;
+omega_9_0_0 = simplify(omega_8_0_0 + omega_9_8_0);
 
 % Body 10 - Keine Rotation im Verhältnis zu KS9
-angVel.omega_10_9_9 = [0; 0; 0];
-angVel.omega_10_9_0 = rotMat.T90 * angVel.omega_10_9_9;
-angVel.omega_10_0_0 = simplify(angVel.omega_9_0_0 + angVel.omega_10_9_0);
+omega_10_9_9 = [0; 0; 0];
+omega_10_9_0 = T90 * omega_10_9_9;
+omega_10_0_0 = simplify(omega_9_0_0 + omega_10_9_0);
 
 % Trägheit im Inertial-Frame (MD_ExtensiveExample S.20) 
-dData.mMat.mm_0_1 = rotMat.T10 * dData.mMat.mm_1_1 * transpose(rotMat.T10);
-dData.mMat.mm_0_2 = rotMat.T20 * dData.mMat.mm_2_2 * transpose(rotMat.T20);
-dData.mMat.mm_0_3 = rotMat.T30 * dData.mMat.mm_3_3 * transpose(rotMat.T30);
-dData.mMat.mm_0_4 = rotMat.T40 * dData.mMat.mm_4_4 * transpose(rotMat.T40);
-dData.mMat.mm_0_5 = rotMat.T50 * dData.mMat.mm_5_5 * transpose(rotMat.T50);
-dData.mMat.mm_0_6 = rotMat.T60 * dData.mMat.mm_6_6 * transpose(rotMat.T60);
-dData.mMat.mm_0_7 = rotMat.T70 * dData.mMat.mm_7_7 * transpose(rotMat.T70);
-dData.mMat.mm_0_8 = rotMat.T80 * dData.mMat.mm_8_8 * transpose(rotMat.T80);
-dData.mMat.mm_0_9 = rotMat.T90 * dData.mMat.mm_9_9 * transpose(rotMat.T90);
-dData.mMat.mm_0_10 =rotMat.T100 * dData.mMat.mm_10_10 * transpose(rotMat.T100);
+mm_0_1 = T10 * mm_1_1 * transpose(T10);
+mm_0_2 = T20 * mm_2_2 * transpose(T20);
+mm_0_3 = T30 * mm_3_3 * transpose(T30);
+mm_0_4 = T40 * mm_4_4 * transpose(T40);
+mm_0_5 = T50 * mm_5_5 * transpose(T50);
+mm_0_6 = T60 * mm_6_6 * transpose(T60);
+mm_0_7 = T70 * mm_7_7 * transpose(T70);
+mm_0_8 = T80 * mm_8_8 * transpose(T80);
+mm_0_9 = T90 * mm_9_9 * transpose(T90);
+mm_0_10 =T100 * mm_10_10 * transpose(T100);
 
 T_rot = simplify( ...
-    1/2 * transpose(angVel.omega_1_0_0) * dData.mMat.mm_0_1 * angVel.omega_1_0_0 + ...  % Body 1
-    1/2 * transpose(angVel.omega_2_0_0) * dData.mMat.mm_0_2 * angVel.omega_2_0_0 + ...  % Body 2
-    1/2 * transpose(angVel.omega_3_0_0) * dData.mMat.mm_0_3 * angVel.omega_3_0_0 + ...  % Body 3
-    1/2 * transpose(angVel.omega_4_0_0) * dData.mMat.mm_0_4 * angVel.omega_4_0_0 + ...  % Body 4
-    1/2 * transpose(angVel.omega_5_0_0) * dData.mMat.mm_0_5 * angVel.omega_5_0_0 + ...  % Body 5
-    1/2 * transpose(angVel.omega_6_0_0) * dData.mMat.mm_0_6 * angVel.omega_6_0_0 + ...  % Body 6
-    1/2 * transpose(angVel.omega_7_0_0) * dData.mMat.mm_0_7 * angVel.omega_7_0_0 + ...  % Body 7
-    1/2 * transpose(angVel.omega_8_0_0) * dData.mMat.mm_0_8 * angVel.omega_8_0_0 + ...  % Body 8
-    1/2 * transpose(angVel.omega_9_0_0) * dData.mMat.mm_0_9 * angVel.omega_9_0_0 + ...  % Body 9
-    1/2 * transpose(angVel.omega_10_0_0) * dData.mMat.mm_0_10 * angVel.omega_10_0_0);   % Body 10
+    1/2 * transpose(omega_1_0_0) * mm_0_1 * omega_1_0_0 + ... % Body 1
+    1/2 * transpose(omega_2_0_0) * mm_0_2 * omega_2_0_0 + ... % Body 2
+    1/2 * transpose(omega_3_0_0) * mm_0_3 * omega_3_0_0 + ... % Body 3
+    1/2 * transpose(omega_4_0_0) * mm_0_4 * omega_4_0_0 + ... % Body 4
+    1/2 * transpose(omega_5_0_0) * mm_0_5 * omega_5_0_0 + ... % Body 5
+    1/2 * transpose(omega_6_0_0) * mm_0_6 * omega_6_0_0 + ... % Body 6
+    1/2 * transpose(omega_7_0_0) * mm_0_7 * omega_7_0_0 + ... % Body 7
+    1/2 * transpose(omega_8_0_0) * mm_0_8 * omega_8_0_0 + ... % Body 8
+    1/2 * transpose(omega_9_0_0) * mm_0_9 * omega_9_0_0 + ... % Body 9
+    1/2 * transpose(omega_10_0_0) * mm_0_10 * omega_10_0_0);   % Body 10
+
+runtime.rot = toc;
+disp(strcat('Runtime for Kinetic Rot:', 32, num2str(runtime.rot)));
+runtime.sum = runtime.sum + runtime.rot;
+tic;
+    
 
 % Gesamte Kinetische Energie
 T = T_trans + T_rot;
 
+
+
 % Potentielle Energie V
 V = ...
-    dData.mass.m1*dData.g*cog.SP_1_0(2)+...   % Body 1
-    dData.mass.m2*dData.g*cog.SP_2_0(2)+...   % Body 2
-    dData.mass.m3*dData.g*cog.SP_3_0(2)+...   % Body 3
-    dData.mass.m4*dData.g*cog.SP_4_0(2)+...   % Body 4
-    dData.mass.m5*dData.g*cog.SP_5_0(2)+...   % Body 5
-    dData.mass.m6*dData.g*cog.SP_6_0(2)+...   % Body 6
-    dData.mass.m7*dData.g*cog.SP_7_0(2)+...   % Body 7
-    dData.mass.m8*dData.g*cog.SP_8_0(2)+...   % Body 8
-    dData.mass.m9*dData.g*cog.SP_9_0(2)+...   % Body 9
-    dData.mass.m10*dData.g*cog.SP_10_0(2);    % Body 10
+    m_1*g*SP_1_0(2)+...   % Body 1
+    m_2*g*SP_2_0(2)+...   % Body 2
+    m_3*g*SP_3_0(2)+...   % Body 3
+    m_4*g*SP_4_0(2)+...   % Body 4
+    m_5*g*SP_5_0(2)+...   % Body 5
+    m_6*g*SP_6_0(2)+...   % Body 6
+    m_7*g*SP_7_0(2)+...   % Body 7
+    m_8*g*SP_8_0(2)+...   % Body 8
+    m_9*g*SP_9_0(2)+...   % Body 9
+    m_10*g*SP_10_0(2);    % Body 10
 
 
 %% Partielle Ableitungen
