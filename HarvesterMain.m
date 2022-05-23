@@ -3,16 +3,21 @@ clear
 close all
 
 %% Initialisierung
-
+tic;
 % generalized coordinates
 syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-genCoord.logiVec = logical([0; 1; 1; 1; 0; 0; 0; 0; 1]); % 1 = definiert, 0 = frei
+genCoord.logiVec = logical([1; 1; 1; 1; 0; 0; 0; 1; 1]); % 1 = definiert, 0 = frei
 
+q_1(t) = deg2rad(45*sin(t));
 q_2(t) = deg2rad(45 + 10*sin(t));
 q_3(t) = deg2rad(-45);
 q_4(t) = 1;
+q_8(t) = deg2rad(90);
 q_9(t) = 0;
+
+initConditions = ...
+    [deg2rad(-90); deg2rad(0); deg2rad(45); 0; 0; 0];
 
 %% Ab hier muss nichts geändert werden
 
@@ -263,28 +268,28 @@ angVel.omega_10_9_0 = rotMat.T90 * angVel.omega_10_9_9;
 angVel.omega_10_0_0 = simplify(angVel.omega_9_0_0 + angVel.omega_10_9_0);
 
 % Trägheit im Inertial-Frame (MD_ExtensiveExample S.20) 
-dData.mMat.mm_0_1 = rotMat.T10 * dData.mMat.mm_1_1 * transpose(rotMat.T10);
-dData.mMat.mm_0_2 = rotMat.T20 * dData.mMat.mm_2_2 * transpose(rotMat.T20);
-dData.mMat.mm_0_3 = rotMat.T30 * dData.mMat.mm_3_3 * transpose(rotMat.T30);
-dData.mMat.mm_0_4 = rotMat.T40 * dData.mMat.mm_4_4 * transpose(rotMat.T40);
-dData.mMat.mm_0_5 = rotMat.T50 * dData.mMat.mm_5_5 * transpose(rotMat.T50);
-dData.mMat.mm_0_6 = rotMat.T60 * dData.mMat.mm_6_6 * transpose(rotMat.T60);
-dData.mMat.mm_0_7 = rotMat.T70 * dData.mMat.mm_7_7 * transpose(rotMat.T70);
-dData.mMat.mm_0_8 = rotMat.T80 * dData.mMat.mm_8_8 * transpose(rotMat.T80);
-dData.mMat.mm_0_9 = rotMat.T90 * dData.mMat.mm_9_9 * transpose(rotMat.T90);
-dData.mMat.mm_0_10 =rotMat.T100 * dData.mMat.mm_10_10 * transpose(rotMat.T100);
+dData.mMat.mm_1_0 = rotMat.T10 * dData.mMat.mm_1_1 * transpose(rotMat.T10);
+dData.mMat.mm_2_0 = rotMat.T20 * dData.mMat.mm_2_2 * transpose(rotMat.T20);
+dData.mMat.mm_3_0 = rotMat.T30 * dData.mMat.mm_3_3 * transpose(rotMat.T30);
+dData.mMat.mm_4_0 = rotMat.T40 * dData.mMat.mm_4_4 * transpose(rotMat.T40);
+dData.mMat.mm_5_0 = rotMat.T50 * dData.mMat.mm_5_5 * transpose(rotMat.T50);
+dData.mMat.mm_6_0 = rotMat.T60 * dData.mMat.mm_6_6 * transpose(rotMat.T60);
+dData.mMat.mm_7_0 = rotMat.T70 * dData.mMat.mm_7_7 * transpose(rotMat.T70);
+dData.mMat.mm_8_0 = rotMat.T80 * dData.mMat.mm_8_8 * transpose(rotMat.T80);
+dData.mMat.mm_9_0 = rotMat.T90 * dData.mMat.mm_9_9 * transpose(rotMat.T90);
+dData.mMat.mm_10_0 =rotMat.T100 * dData.mMat.mm_10_10 * transpose(rotMat.T100);
 
 T_rot = simplify( ...
-    1/2 * transpose(angVel.omega_1_0_0) * dData.mMat.mm_0_1 * angVel.omega_1_0_0 + ...  % Body 1
-    1/2 * transpose(angVel.omega_2_0_0) * dData.mMat.mm_0_2 * angVel.omega_2_0_0 + ...  % Body 2
-    1/2 * transpose(angVel.omega_3_0_0) * dData.mMat.mm_0_3 * angVel.omega_3_0_0 + ...  % Body 3
-    1/2 * transpose(angVel.omega_4_0_0) * dData.mMat.mm_0_4 * angVel.omega_4_0_0 + ...  % Body 4
-    1/2 * transpose(angVel.omega_5_0_0) * dData.mMat.mm_0_5 * angVel.omega_5_0_0 + ...  % Body 5
-    1/2 * transpose(angVel.omega_6_0_0) * dData.mMat.mm_0_6 * angVel.omega_6_0_0 + ...  % Body 6
-    1/2 * transpose(angVel.omega_7_0_0) * dData.mMat.mm_0_7 * angVel.omega_7_0_0 + ...  % Body 7
-    1/2 * transpose(angVel.omega_8_0_0) * dData.mMat.mm_0_8 * angVel.omega_8_0_0 + ...  % Body 8
-    1/2 * transpose(angVel.omega_9_0_0) * dData.mMat.mm_0_9 * angVel.omega_9_0_0 + ...  % Body 9
-    1/2 * transpose(angVel.omega_10_0_0) * dData.mMat.mm_0_10 * angVel.omega_10_0_0);   % Body 10
+    1/2 * transpose(angVel.omega_1_0_0) * dData.mMat.mm_1_0 * angVel.omega_1_0_0 + ...  % Body 1
+    1/2 * transpose(angVel.omega_2_0_0) * dData.mMat.mm_2_0 * angVel.omega_2_0_0 + ...  % Body 2
+    1/2 * transpose(angVel.omega_3_0_0) * dData.mMat.mm_3_0 * angVel.omega_3_0_0 + ...  % Body 3
+    1/2 * transpose(angVel.omega_4_0_0) * dData.mMat.mm_4_0 * angVel.omega_4_0_0 + ...  % Body 4
+    1/2 * transpose(angVel.omega_5_0_0) * dData.mMat.mm_5_0 * angVel.omega_5_0_0 + ...  % Body 5
+    1/2 * transpose(angVel.omega_6_0_0) * dData.mMat.mm_6_0 * angVel.omega_6_0_0 + ...  % Body 6
+    1/2 * transpose(angVel.omega_7_0_0) * dData.mMat.mm_7_0 * angVel.omega_7_0_0 + ...  % Body 7
+    1/2 * transpose(angVel.omega_8_0_0) * dData.mMat.mm_8_0 * angVel.omega_8_0_0 + ...  % Body 8
+    1/2 * transpose(angVel.omega_9_0_0) * dData.mMat.mm_9_0 * angVel.omega_9_0_0 + ...  % Body 9
+    1/2 * transpose(angVel.omega_10_0_0) * dData.mMat.mm_10_0 * angVel.omega_10_0_0);   % Body 10
 
 % Gesamte Kinetische Energie
 T = T_trans + T_rot;
@@ -339,13 +344,16 @@ MM = matlabFunction(massMatrix, 'vars', {t, genCoord.vecY});
 FF = matlabFunction(rhsVector, 'vars', {t, genCoord.vecY});
 
 %% Simulation
+toc
+tic;
 
-initConditions = ...
-    [deg2rad(90); deg2rad(-90); deg2rad(0); deg2rad(45); deg2rad(90); 0; 0; 0; 0; 0];
+% initConditions = ...
+%     [deg2rad(90); deg2rad(-90); deg2rad(0); deg2rad(45); deg2rad(90); 0; 0; 0; 0; 0];
 
 opt = odeset('Mass', MM, 'MaxStep', 1e-2);
 sol = ode45(FF, [0,10], initConditions, opt);
 clearvars opt 
+toc
 
 %% Plot Validation (Koordinatensysteme, Schwerpunkte) 
 
