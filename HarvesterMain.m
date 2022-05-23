@@ -2,19 +2,24 @@ clc
 clear
 close all
 
-%% Variablen definieren
-tic;
+%% Initialisierung
 
-% Winkel
-syms q_1(t) q_2(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t)
+% generalized coordinates
+syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-% Translation
-syms q_4(t) q_9(t)
+genCoord.logiVec = logical([0; 1; 1; 1; 0; 0; 0; 0; 1]); % 1 = definiert, 0 = frei
 
 q_2(t) = deg2rad(45 + 10*sin(t));
 q_3(t) = deg2rad(-45);
 q_4(t) = 1;
 q_9(t) = 0;
+
+%% Ab hier muss nichts geändert werden
+
+% überschriebene Koordinaten
+genCoord.qsTotal = [q_1(t); q_2(t); q_3(t); q_4(t); q_5(t); q_6(t); q_7(t); q_8(t); q_9(t)];
+genCoord.qsDefined = genCoord.qsTotal(genCoord.logiVec);
+genCoord.qsFree = genCoord.qsTotal(~genCoord.logiVec);
 
 %% DESIGN DATA
 
@@ -99,15 +104,15 @@ rotMat.T98 = [cos(q_8(t)) -sin(q_8(t)) 0; sin(q_8(t)) cos(q_8(t)) 0; 0 0 1];
 rotMat.T109 = [1 0 0; 0 1 0; 0 0 1];
 
 % rotation matrix in inertial CS
-rotMat.T20 = simplify(rotMat.rotMat.T10*rotMat.T21);
-rotMat.T30 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32);
-rotMat.T40 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43);
-rotMat.T50 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54);
-rotMat.T60 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65);
-rotMat.T70 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76);
-rotMat.T80 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87);
-rotMat.T90 = simplify(rotMat.rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87*rotMat.T98);
-rotMat.rotMat.T100 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87*rotMat.T98*rotMat.T109);
+rotMat.T20 = simplify(rotMat.T10*rotMat.T21);
+rotMat.T30 = simplify(rotMat.T10*rotMat.T21*rotMat.T32);
+rotMat.T40 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43);
+rotMat.T50 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54);
+rotMat.T60 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65);
+rotMat.T70 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76);
+rotMat.T80 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87);
+rotMat.T90 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87*rotMat.T98);
+rotMat.T100 = simplify(rotMat.T10*rotMat.T21*rotMat.T32*rotMat.T43*rotMat.T54*rotMat.T65*rotMat.T76*rotMat.T87*rotMat.T98*rotMat.T109);
 
 %% Joints
 
@@ -140,9 +145,9 @@ cog.SP10_10 = [0; 0; 0];
 %% Koordinatensysteme & Schwerpunkte im Inertial-Frame
 
 % Koordinatensysteme (Position) im Inertial Frame
-coordSys.KS_1 = joint.J0_0+rotMat.rotMat.T10*joint.J1_0+rotMat.rotMat.T10*joint.J1_1;
-coordSys.KS_2 = coordSys.KS_1+rotMat.rotMat.T10*joint.J1_2;
-coordSys.KS_3 = simplify(coordSys.KS_2+rotMat.rotMat.T20*joint.J2_2);
+coordSys.KS_1 = joint.J0_0+rotMat.T10*joint.J1_0+rotMat.T10*joint.J1_1;
+coordSys.KS_2 = coordSys.KS_1+rotMat.T10*joint.J1_2;
+coordSys.KS_3 = simplify(coordSys.KS_2+rotMat.T20*joint.J2_2);
 coordSys.KS_4 = simplify(coordSys.KS_3+rotMat.T30*joint.J3_3);
 coordSys.KS_5 = simplify(coordSys.KS_4+rotMat.T40*joint.J4_4+rotMat.T40*[q_4(t); 0; 0]);
 coordSys.KS_6 = simplify(coordSys.KS_5+rotMat.T50*joint.J5_5);
@@ -151,9 +156,17 @@ coordSys.KS_8 = simplify(coordSys.KS_7+rotMat.T70*joint.J7_7);
 coordSys.KS_9 = simplify(coordSys.KS_8+rotMat.T80*joint.J8_8);
 coordSys.KS_10 = simplify(coordSys.KS_9+rotMat.T90*joint.J10_9+rotMat.T90*[q_9(t); 0; 0]);
 
+% Koordinatensysteme in einem Vektor zusammenfassen, wird für Plot benötigt
+syms temp
+coordSys.sumKS(3,1) = temp;
+for n=1:10
+    coordSys.sumKS(:,n) = coordSys.(strcat('KS_', num2str(n)));
+end
+clearvars n temp
+
 % Schwerpunkte (Position) im Inertial-Frame
-cog.SP_1_0 = joint.J0_0+rotMat.rotMat.T10*joint.J1_0+rotMat.rotMat.T10*joint.J1_1+rotMat.rotMat.T10*cog.SP1_1;
-cog.SP_2_0 = coordSys.KS_1+rotMat.rotMat.T10*joint.J1_2+rotMat.rotMat.T10*cog.SP2_2;
+cog.SP_1_0 = joint.J0_0+rotMat.T10*joint.J1_0+rotMat.T10*joint.J1_1+rotMat.T10*cog.SP1_1;
+cog.SP_2_0 = coordSys.KS_1+rotMat.T10*joint.J1_2+rotMat.T10*cog.SP2_2;
 cog.SP_3_0 = simplify(coordSys.KS_3+rotMat.T30*cog.SP3_3);
 cog.SP_4_0 = simplify(coordSys.KS_4+rotMat.T40*cog.SP4_4);
 cog.SP_5_0 = simplify(coordSys.KS_5+rotMat.T50*cog.SP5_5);
@@ -161,7 +174,7 @@ cog.SP_6_0 = simplify(coordSys.KS_6+rotMat.T60*cog.SP6_6);
 cog.SP_7_0 = simplify(coordSys.KS_7+rotMat.T70*cog.SP7_7);
 cog.SP_8_0 = simplify(coordSys.KS_8+rotMat.T80*cog.SP8_8);
 cog.SP_9_0 = simplify(coordSys.KS_9+rotMat.T90*cog.SP9_9);
-cog.SP_10_0 = simplify(coordSys.KS_10+rotMat.rotMat.T100*cog.SP10_10);
+cog.SP_10_0 = simplify(coordSys.KS_10+rotMat.T100*cog.SP10_10);
 
 % Schwerpunkte (Geschwindigkeit)
 vcog.vSP_1_0 = simplify(diff(cog.SP_1_0, t));
@@ -176,8 +189,9 @@ vcog.vSP_9_0 = simplify(diff(cog.SP_9_0, t));
 vcog.vSP_10_0 = simplify(diff(cog.SP_10_0, t));
 
 % Baumstamm darstellen (Endpunkte)
-BS_1 = coordSys.KS_10 + rotMat.rotMat.T100*[3; 0; 0];
-BS_2 = coordSys.KS_10 + rotMat.rotMat.T100*[-3; 0; 0];
+coordSys.BS_1 = coordSys.KS_10 + rotMat.T100*[3; 0; 0];
+coordSys.BS_2 = coordSys.KS_10 + rotMat.T100*[-3; 0; 0];
+coordSys.sumBS = [coordSys.BS_1 coordSys.BS_2];
 
 
 %% Energien berechnen
@@ -290,118 +304,48 @@ V = ...
 
 
 %% Partielle Ableitungen
-tic;
 
-dTdq = ...
-    [diff(T,q_1(t)) ...
-    diff(T,q_5(t)) ...
-    diff(T,q_6(t)) ...
-    diff(T,q_7(t)) ...
-    diff(T,q_8(t))];
-
-runtime.dTdq = toc;
-disp(strcat('Runtime for dTdq:', 32, num2str(runtime.dTdq)));
-runtime.sum = runtime.sum + runtime.dTdq;
-tic;
-
-dqdt = ...
-    [diff(q_1(t), t) ...
-    diff(q_5(t), t) ...
-    diff(q_6(t), t) ...
-    diff(q_7(t), t) ...
-    diff(q_8(t), t)];
-
-runtime.dqdt = toc;
-disp(strcat('Runtime for dqdt:', 32, num2str(runtime.dqdt)));
-runtime.sum = runtime.sum + runtime.dqdt;
-tic;
-
-dTdqpktdt = ... % d/dt * (dT/dq_pkt)
-    [diff(diff(T, dqdt(1)),t) ...
-    diff(diff(T, dqdt(2)),t) ...
-    diff(diff(T, dqdt(3)),t) ...
-    diff(diff(T, dqdt(4)),t) ...
-    diff(diff(T, dqdt(5)),t)];
-
-runtime.dTdqpktdt = toc;
-disp(strcat('Runtime for dTdqpktdt:', 32, num2str(runtime.dTdqpktdt)));
-runtime.sum = runtime.sum + runtime.dTdqpktdt;
-tic;
-
-dVdq = ...
-    [diff(V,q_1(t)) ...
-    diff(V,q_5(t)) ...
-    diff(V,q_6(t)) ...
-    diff(V,q_7(t)) ...
-    diff(V,q_8(t))];
-
-runtime.dVdq = toc;
-disp(strcat('Runtime for dVdq:', 32, num2str(runtime.dVdq)));
-runtime.sum = runtime.sum + runtime.dVdq;
-tic;
+for n=1:length(genCoord.qsFree)
+    dTdq(n) = diff(T, genCoord.qsFree(n));
+    dqdt(n) = diff(genCoord.qsFree(n), t);
+    dTdqpktdt(n) = diff(T, dqdt(n), t);
+    dVdq(n) = diff(V, genCoord.qsFree(n));
+end
+clearvars n
 
 % Equations of Motion
-syms Qs Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9
-Qs = [0 0 0 0 0];
-EOMs = (dTdqpktdt - dTdq + dVdq) == Qs;
-
-runtime.eoms = toc;
-disp(strcat('Runtime for EOMs:', 32, num2str(runtime.eoms)));
-runtime.sum = runtime.sum + runtime.eoms;
-tic;
+EOMs = dTdqpktdt - dTdq + dVdq;
 
 %% Preparing Equations of Motion
 
-qVec = [q_1(t) q_5(t) q_6(t) q_7(t) q_8(t)];
-
 % first order differentail equation
-[eqs, vars] = reduceDifferentialOrder(EOMs, transpose(qVec));
-
-runtime.redode = toc;
-disp(strcat('Runtime for reduceDifferentialOrder:', 32, num2str(runtime.redode)));
-runtime.sum = runtime.sum + runtime.redode;
-tic;
+[eqs, vars] = reduceDifferentialOrder(EOMs, genCoord.qsFree);
 
 % transform into form Mass matrix
 [massMatrix, rhsVector] = massMatrixForm(eqs, vars);
 
-runtime.mmf = toc;
-disp(strcat('Runtime for massMatrixForm:', 32, num2str(runtime.mmf)));
-runtime.sum = runtime.sum + runtime.mmf;
-tic;
-
 % rename equations of first order
 
-syms Y1 Y2 Y3 Y4 Y5 Y6 Y7 Y8 Y9 Y10 Y11 Y12 Y13 Y14 Y15 ...
-    Y16 Y17 Y18 
-vecY = [Y1; Y2; Y3; Y4; Y5; Y6; Y7; Y8; Y9; Y10];
-massMatrix = subs(massMatrix, vars, vecY);
-rhsVector = subs(rhsVector, vars, vecY);
+syms Y1 Y2 Y3 Y4 Y5 Y6 Y7 Y8 Y9 Y10 Y11 Y12 Y13 Y14 Y15 Y16 Y17 Y18 
+genCoord.vecY = [Y1; Y2; Y3; Y4; Y5; Y6; Y7; Y8; Y9; Y10; Y11; Y12; Y13; Y14; Y15; Y16; Y17; Y18];
+clearvars Y1 Y2 Y3 Y4 Y5 Y6 Y7 Y8 Y9 Y10 Y11 Y12 Y13 Y14 Y15 Y16 Y17 Y18
+genCoord.vecY = genCoord.vecY(~[genCoord.logiVec; genCoord.logiVec]);
 
-runtime.subsmmrhs = toc;
-disp(strcat('Runtime for subs in massMatrix and rhsVector:', 32, num2str(runtime.subsmmrhs)));
-runtime.sum = runtime.sum + runtime.subsmmrhs;
-tic;
+massMatrix = subs(massMatrix, vars, genCoord.vecY);
+rhsVector = subs(rhsVector, vars, genCoord.vecY);
 
 % create function handle
-MM = matlabFunction(massMatrix, 'vars', {t, vecY});
-FF = matlabFunction(rhsVector, 'vars', {t, vecY});
-
-runtime.functionhandle = toc;
-disp(strcat('Runtime for matlab Function Handle:', 32, num2str(runtime.functionhandle)));
-runtime.sum = runtime.sum + runtime.functionhandle;
+MM = matlabFunction(massMatrix, 'vars', {t, genCoord.vecY});
+FF = matlabFunction(rhsVector, 'vars', {t, genCoord.vecY});
 
 %% Simulation
-tic;
 
 initConditions = ...
     [deg2rad(90); deg2rad(-90); deg2rad(0); deg2rad(45); deg2rad(90); 0; 0; 0; 0; 0];
 
 opt = odeset('Mass', MM, 'MaxStep', 1e-2);
 sol = ode45(FF, [0,10], initConditions, opt);
-
-runtime.simulation = toc;
-disp(strcat('Runtime for ode45 Simulation:', 32, num2str(runtime.simulation)));
+clearvars opt 
 
 %% Plot Validation (Koordinatensysteme, Schwerpunkte) 
 
@@ -442,75 +386,81 @@ disp(strcat('Runtime for ode45 Simulation:', 32, num2str(runtime.simulation)));
 % set(gcf,'position',[100,100,1000,600])
 % grid
 
+%% Ergebnisvektor erstellen
+
+plotData.time = linspace(sol.x(1),sol.x(end), 200);
+plotData.ySol = transpose(deval(sol, plotData.time));
+
+% Ergebnisvektor erstellen
+qFreeCount = 1;
+qDefinedCount = 1;
+
+plotData.y = zeros(length(plotData.ySol), 18);
+
+for n=1:9
+    switch genCoord.logiVec(n)
+        case 1
+            syms qTemp(t) qDotTemp(t)
+            qTemp(t) = genCoord.qsDefined(qDefinedCount);
+            plotData.y(:,n) = [qTemp(plotData.time)]';
+            qDotTemp(t) = diff(genCoord.qsDefined(qDefinedCount), t);
+            plotData.y(:,n+9) = [qDotTemp(plotData.time)]';
+            qDefinedCount = qDefinedCount + 1;
+        case 0
+            plotData.y(:,n) = plotData.ySol(:,qFreeCount);
+            plotData.y(:,n+9) = plotData.ySol(:,qFreeCount+length(genCoord.qsFree));
+            qFreeCount = qFreeCount + 1;
+    end
+end
+clearvars qFreeCount qDefinedCount qTemp qDotTemp n
+
 %% Update Plot
-
-time = linspace(sol.x(1),sol.x(end), 200);
-y = transpose(deval(sol, time));
-
-% Vorgegebene q in Ergebnisvektor einfügen
-yTemp = y;
-y(:,1) = yTemp(:,1);
-y(:,2) = [q_2(time)]';
-y(:,3) = [q_3(time)]';
-y(:,4) = [q_4(time)]';
-y(:,5) = yTemp(:,2);
-y(:,6) = yTemp(:,3);
-y(:,7) = yTemp(:,4);
-y(:,8) = yTemp(:,5);
-y(:,9) = [q_9(time)]';
-
-qVec = [q_1(t) q_2(t) q_3(t) q_4(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t) t];
+tic;
 
 figure('Name', 'Update Plot')
-KS_0 = [KS_1 KS_2 KS_3 KS_4 KS_5 KS_6 KS_7 KS_8 KS_9 KS_10];
 
-% Start Conditions
-KS_0_temp = subs(KS_0, qVec, [y(1,1) y(1,2) y(1,3) y(1,4) y(1,5) y(1,6) y(1,7) y(1,8) y(1,9) time(1)]);
+% Start Conditions für Harvester
+plotData.subsVec = [q_1(t) q_2(t) q_3(t) q_4(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t) t];
+CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
+CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
 
-% XYZ definieren
-KS_0_tempX = KS_0_temp(logical([1;0;0]));
-KS_0_tempY = KS_0_temp(logical([0;1;0]));
-KS_0_tempZ = KS_0_temp(logical([0;0;1]));
+% XYZ definieren für Harvester Plot
+vidPlotHarv = plot3(CSPlotHarvTemp(1),CSPlotHarvTemp(3),CSPlotHarvTemp(2),'-o');
+vidPlotHarv.XDataSource = 'CSPlotHarv_X';
+vidPlotHarv.YDataSource = 'CSPlotHarv_Y';
+vidPlotHarv.ZDataSource = 'CSPlotHarv_Z';
 
-vidPlot = plot3(KS_0_tempX,KS_0_tempZ,KS_0_tempY,'-o');
-vidPlot.XDataSource = 'KS_0_tempX';
-vidPlot.YDataSource = 'KS_0_tempY';
-vidPlot.ZDataSource = 'KS_0_tempZ';
-
-% Baumstamm darstellen
-BS_0 = [BS_1 BS_2];
-BS_0_temp = subs(BS_0, qVec, [y(1,1) y(1,2) y(1,3) y(1,4) y(1,5) y(1,6) y(1,7) y(1,8) y(1,9) time(1)]);
-BS_0_tempX = BS_0_temp(logical([1;0;0]));
-BS_0_tempY = BS_0_temp(logical([0;1;0]));
-BS_0_tempZ = BS_0_temp(logical([0;0;1]));
 hold on
-vidPlotBS = plot3(KS_0_tempX,KS_0_tempZ,KS_0_tempY,'-o');
-vidPlotBS.XDataSource = 'BS_0_tempX';
-vidPlotBS.YDataSource = 'BS_0_tempY';
-vidPlotBS.ZDataSource = 'BS_0_tempZ';
+
+% XYZ definieren für Tree Plot
+vidPlotTree = plot3(CSPlotTreeTemp(1),CSPlotTreeTemp(3),CSPlotTreeTemp(2),'-o');
+vidPlotTree.XDataSource = 'CSPlotTree_X';
+vidPlotTree.YDataSource = 'CSPlotTree_Y';
+vidPlotTree.ZDataSource = 'CSPlotTree_Z';
 
 axis([-15 15 0 20 -15 15])
 view(-76, 17)
 set(gcf,'position',[50,50,1000,900])
 grid
 
-for n = 1:1:length(y)
-    KS_0_temp = subs(KS_0, qVec, [y(n,1) y(n,2) y(n,3) y(n,4) y(n,5) y(n,6) y(n,7) y(n,8) y(n,9) time(n)]);
-    BS_0_temp = subs(BS_0, qVec, [y(n,1) y(n,2) y(n,3) y(n,4) y(n,5) y(n,6) y(n,7) y(n,8) y(n,9) time(n)]);
+for n = 1:3:length(plotData.y)
+    CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
+    CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
 
-    KS_0_tempX = KS_0_temp(1,:);
-    KS_0_tempY = KS_0_temp(3,:);
-    KS_0_tempZ = KS_0_temp(2,:);
+    CSPlotHarv_X = CSPlotHarvTemp(1,:);
+    CSPlotHarv_Y = CSPlotHarvTemp(3,:);
+    CSPlotHarv_Z = CSPlotHarvTemp(2,:);
 
-    BS_0_tempX = BS_0_temp(1,:);
-    BS_0_tempY = BS_0_temp(3,:);
-    BS_0_tempZ = BS_0_temp(2,:);
+    CSPlotTree_X = CSPlotTreeTemp(1,:);
+    CSPlotTree_Y = CSPlotTreeTemp(3,:);
+    CSPlotTree_Z = CSPlotTreeTemp(2,:);
 
     refreshdata
     pause(0.01)
-    disp(strcat('updated ', num2str(n), '%'))
+    disp(strcat('updated ', num2str(n), '/ ', num2str(length(plotData.y))))
 end
 
-%% Runtime Disp
-runtime.sum = runtime.sum + runtime.simulation;
-disp(strcat('Runtime:', 32, num2str(runtime.sum)));
+clearvars n CSPlotHarv_X CSPlotHarv_Y CSPlotHarv_Z CSPlotTree_X CSPlotTree_Y CSPlotTree_Z ...
+    CSPlotHarvTemp CSPlotTreeTemp
+
+toc
