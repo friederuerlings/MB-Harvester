@@ -31,6 +31,19 @@ x_J88 = subs(x_J88, 1);
 x_J910 = subs(x_J910, 0);
 g = subs(g, 9.81);
 
+designData.x_0 = 6;         % Harvester Versatz in X
+designData.y_0 = 1;         % Harvester Versatz in Y
+designData.z_0 = 12;        % Harvester Versatz in Z
+designData.y_J12 = 0.5;     % Höhe von Body 2
+designData.x_J33 = 5;       % Länge von Body 3
+designData.x_J44 = 3;       % Länge von Body 4
+designData.x_J66 = 0.3;     % Länge von Body 5
+designData.x_J77 = 0.4;     % Länge von Body 6
+designData.x_J88 = 1;       % Länge von Body 7
+designData.x_J910 = 0;      % Versatz des Baumstamms
+designData.g = 9.81;        % Erdbeschleunigung
+
+
 % Massen
 syms m_1 m_2 m_3 m_4 m_5 m_6 m_7 m_8 m_9 m_10 
 
