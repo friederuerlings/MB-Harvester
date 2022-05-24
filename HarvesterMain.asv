@@ -365,44 +365,6 @@ sol = ode45(FF, simu.timeInterv, simu.initCon, opt);
 clearvars opt 
 toc
 
-%% Ergebnisvektor erstellen
-plotData.nSteps = 200;
-plotData.dT = simu.timeInterv(2)/plotData.nSteps;
-plotData.time = linspace(sol.x(1),sol.x(end), plotData.nSteps);
-[plotData.devalY, plotData.devalYd] = deval(sol, plotData.time);
-
-plotData.devalY = transpose(plotData.devalY);
-plotData.devalYd = transpose(plotData.devalYd);
-
-% Ergebnisvektor erstellen
-qFreeCount = 1;
-qDefinedCount = 1;
-
-plotData.y = zeros(plotData.nSteps, 9);
-plotData.yd =  zeros(plotData.nSteps, 9);
-plotData.ydd =  zeros(plotData.nSteps, 9);
-
-for n=1:9
-    switch genCoord.logiVec(n)
-        case 1  % Ergebnisvektor mit definiertem q beschreiben
-            syms qTemp(t) qdTemp(t) qddTemp(t)
-            qTemp(t) = genCoord.qsDefined(qDefinedCount);
-            plotData.y(:,n) = [qTemp(plotData.time)]';  % q
-            qdTemp(t) = diff(genCoord.qsDefined(qDefinedCount), t);
-            plotData.yd(:,n) = [qdTemp(plotData.time)]'; % qdot
-            qddTemp(t) = diff(genCoord.qsDefined(qDefinedCount), t, t);
-            plotData.ydd(:,n) = [qddTemp(plotData.time)]'; % qdotdot
-            qDefinedCount = qDefinedCount + 1;
-
-        case 0  % Ergebnisvektor mit ode-Ergebnis beschreiben
-            plotData.y(:,n) = plotData.devalY(:,qFreeCount);  % q
-            plotData.yd(:,n) = plotData.devalY(:,qFreeCount+length(genCoord.qsFree));    % qdot
-            plotData.ydd(:,n) = plotData.devalYd(:,qFreeCount+length(genCoord.qsFree));   % qdotdot
-            qFreeCount = qFreeCount + 1;
-    end
-end
-clearvars qFreeCount qDefinedCount qTemp qDotTemp n
-
 %% Plot Validation (Koordinatensysteme, Schwerpunkte) 
 
 % SP_0 = [SP_1_0 SP_2_0 SP_3_0 SP_4_0 SP_5_0 SP_6_0 SP_7_0 SP_8_0 SP_9_0 SP_10_0];
@@ -441,6 +403,39 @@ clearvars qFreeCount qDefinedCount qTemp qDotTemp n
 % view(3, 10)
 % set(gcf,'position',[100,100,1000,600])
 % grid
+
+%% Ergebnisvektor erstellen
+plotData.nSteps = 200;
+plotData.dT = simu.timeInterv(2)/plotData.nSteps;
+plotData.time = linspace(sol.x(1),sol.x(end), plotData.nSteps);
+[plotData.ySol, plotData.ySolDot] = deval(sol, plotData.time);
+
+plotData.ySol = transpose(plotData.ySol);
+
+% Ergebnisvektor erstellen
+qFreeCount = 1;
+qDefinedCount = 1;
+
+plotData.y = zeros(length(plotData.ySol), 18);
+
+for n=1:9
+    switch genCoord.logiVec(n)
+        case 1  % Ergebnisvektor mit definiertem q beschreiben
+            syms qTemp(t) qDotTemp(t) qDotDotTemp(t)
+            qTemp(t) = genCoord.qsDefined(qDefinedCount);
+            plotData.y(:,n) = [qTemp(plotData.time)]';  % q
+            qDotTemp(t) = diff(genCoord.qsDefined(qDefinedCount), t);
+            plotData.y(:,n+9) = [qDotTemp(plotData.time)]'; % qpkt
+            
+            qDefinedCount = qDefinedCount + 1;
+
+        case 0  % Ergebnisvektor mit ode-Ergebnis beschreiben
+            plotData.y(:,n) = plotData.ySol(:,qFreeCount);  % q
+            plotData.y(:,n+9) = plotData.ySol(:,qFreeCount+length(genCoord.qsFree));    % qpkt
+            qFreeCount = qFreeCount + 1;
+    end
+end
+clearvars qFreeCount qDefinedCount qTemp qDotTemp n
 
 %% Update Plot
 tic;
