@@ -328,6 +328,10 @@ if length(genCoord.qsFree) == 9
     end
 
     clearvars n i q1 q2 q3 q4 q5 q6 q7 q8 q9 q1d q2d q3d q4d q5d q6d q7d q8d q9d q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd
+
+    MnF.qFunHandle = matlabFunction(MnF.q_1, MnF.q_2, MnF.q_3, MnF.q_4, MnF.q_5, MnF.q_6, MnF.q_7, MnF.q_8, MnF.q_9);
+else
+    load('MnF.mat');
 end
 
 
@@ -421,16 +425,13 @@ end
 clearvars qFreeCount qDefinedCount qTemp qDotTemp n
 
 %% Joint Torque and Forces
-plotData.MnF.q_1 = MnF.q_1;
 
-for n=1:9
-    tic;
-    plotData.MnF.q_1 = subs(plotData.MnF.q_1, MnF.qVec(n), plotData.y(:,n));
-    plotData.MnF.q_1 = subs(plotData.MnF.q_1, MnF.qdVec(n), plotData.yd(:,n));
-    plotData.MnF.q_1 = subs(plotData.MnF.q_1, MnF.qddVec(n), plotData.ydd(:,n));
-    toc
-    disp(num2str(n))
-end
+[q1MF, q2MF, q3MF, q4MF, q5MF, q6MF, q7MF, q8MF, q9MF] = ...
+    MnF.qFunHandle(plotData.y(:,1),plotData.y(:,2), plotData.y(:,3), plotData.y(:,4), plotData.y(:,5), plotData.y(:,6), plotData.y(:,7), plotData.y(:,8), plotData.y(:,9), ...
+    plotData.yd(:,1),plotData.yd(:,2),plotData.yd(:,3),plotData.yd(:,4),plotData.yd(:,5),plotData.yd(:,6),plotData.yd(:,7),plotData.yd(:,8),plotData.yd(:,9), ...
+    plotData.ydd(:,1),plotData.ydd(:,2),plotData.ydd(:,3),plotData.ydd(:,4),plotData.ydd(:,5),plotData.ydd(:,6),plotData.ydd(:,7),plotData.ydd(:,8),plotData.ydd(:,9));
+plotData.MnF = [q1MF, q2MF, q3MF, q4MF, q5MF, q6MF, q7MF, q8MF, q9MF];
+clearvars q1MF q2MF q3MF q4MF q5MF q6MF q7MF q8MF q9MF
 
 %% Plot Validation (Koordinatensysteme, Schwerpunkte) 
 
