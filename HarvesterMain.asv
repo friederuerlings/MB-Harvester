@@ -9,15 +9,12 @@ syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
 genCoord.logiVec = logical([1; 1; 1; 1; 0; 0; 0; 1; 1]); % 1 = definiert, 0 = frei
 
-q_1(t) = deg2rad(45*sin(t));
-q_2(t) = deg2rad(45 + 10*sin(t));
+q_1(t) = deg2rad(15*sin(t));
+q_2(t) = deg2rad(45);
 q_3(t) = deg2rad(-45);
 q_4(t) = 1;
 q_8(t) = deg2rad(90);
 q_9(t) = 0;
-
-initConditions = ...
-    [deg2rad(-90); deg2rad(0); deg2rad(45); 0; 0; 0];
 
 %% Ab hier muss nichts geändert werden
 
@@ -308,10 +305,30 @@ V = ...
     dData.mass.m10*dData.g*cog.SP_10_0(2);    % Body 10
 
 %% Lagrangian Mechanics for Torques and Forces
+% nur ausführbar, wenn alle Freiheitsgrade offen sind
 
-% L = T - V;
-% 
-% Mq1 = 
+if length(genCoord.qsFree) == 9 
+    L = T - V;
+
+    syms q1 q2 q3 q4 q5 q6 q7 q8 q9
+    syms q1d q2d q3d q4d q5d q6d q7d q8d q9d
+    syms q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd
+
+    MnF.qVec = [q1; q2; q3; q4; q5; q6; q7; q8; q9];
+    MnF.qdVec = [q1d; q2d; q3d; q4d; q5d; q6d; q7d; q8d; q9d];
+    MnF.qddVec = [q1dd; q2dd; q3dd; q4dd; q5dd; q6dd; q7dd; q8dd; q9dd];
+
+    for n=1:9
+        MnF.(strcat('q_', num2str(n))) = diff(L, diff(genCoord.qsTotal(n), t), t) - diff(L, genCoord.qsTotal(n));
+        for i=1:9
+            MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t, t), MnF.qddVec(i));
+            MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t), MnF.qdVec(i));
+            MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), genCoord.qsTotal(i), MnF.qVec(i));
+        end
+    end
+
+    clearvars n i q1 q2 q3 q4 q5 q6 q7 q8 q9 q1d q2d q3d q4d q5d q6d q7d q8d q9d q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd
+end
 
 
 %% Partielle Ableitungen
@@ -365,6 +382,51 @@ sol = ode45(FF, simu.timeInterv, simu.initCon, opt);
 clearvars opt 
 toc
 
+%% Ergebnisvektor erstellen
+plotData.nSteps = 200;
+plotData.dT = simu.timeInterv(2)/plotData.nSteps;
+plotData.time = linspace(sol.x(1),sol.x(end), plotData.nSteps);
+[plotData.devalY, plotData.devalYd] = deval(sol, plotData.time);
+
+plotData.devalY = transpose(plotData.devalY);
+plotData.devalYd = transpose(plotData.devalYd);
+
+% Ergebnisvektor erstellen
+qFreeCount = 1;
+qDefinedCount = 1;
+
+plotData.y = zeros(plotData.nSteps, 9);
+plotData.yd =  zeros(plotData.nSteps, 9);
+plotData.ydd =  zeros(plotData.nSteps, 9);
+
+for n=1:9
+    switch genCoord.logiVec(n)
+        case 1  % Ergebnisvektor mit definiertem q beschreiben
+            syms qTemp(t) qdTemp(t) qddTemp(t)
+            qTemp(t) = genCoord.qsDefined(qDefinedCount);
+            plotData.y(:,n) = [qTemp(plotData.time)]';  % q
+            qdTemp(t) = diff(genCoord.qsDefined(qDefinedCount), t);
+            plotData.yd(:,n) = [qdTemp(plotData.time)]'; % qdot
+            qddTemp(t) = diff(genCoord.qsDefined(qDefinedCount), t, t);
+            plotData.ydd(:,n) = [qddTemp(plotData.time)]'; % qdotdot
+            qDefinedCount = qDefinedCount + 1;
+
+        case 0  % Ergebnisvektor mit ode-Ergebnis beschreiben
+            plotData.y(:,n) = plotData.devalY(:,qFreeCount);  % q
+            plotData.yd(:,n) = plotData.devalY(:,qFreeCount+length(genCoord.qsFree));    % qdot
+            plotData.ydd(:,n) = plotData.devalYd(:,qFreeCount+length(genCoord.qsFree));   % qdotdot
+            qFreeCount = qFreeCount + 1;
+    end
+end
+clearvars qFreeCount qDefinedCount qTemp qDotTemp n
+
+%% Joint Torque and Forces
+
+plotData.MnF.q_1 = subs(MnF.q_1, [transpose(MnF.qVec), transpose(MnF.qdVec), transpose(MnF.qddVec)], )
+
+
+
+
 %% Plot Validation (Koordinatensysteme, Schwerpunkte) 
 
 % SP_0 = [SP_1_0 SP_2_0 SP_3_0 SP_4_0 SP_5_0 SP_6_0 SP_7_0 SP_8_0 SP_9_0 SP_10_0];
@@ -403,39 +465,6 @@ toc
 % view(3, 10)
 % set(gcf,'position',[100,100,1000,600])
 % grid
-
-%% Ergebnisvektor erstellen
-plotData.nSteps = 200;
-plotData.dT = simu.timeInterv(2)/plotData.nSteps;
-plotData.time = linspace(sol.x(1),sol.x(end), plotData.nSteps);
-[plotData.ySol, plotData.ySolDot] = deval(sol, plotData.time);
-
-plotData.ySol = transpose(plotData.ySol);
-
-% Ergebnisvektor erstellen
-qFreeCount = 1;
-qDefinedCount = 1;
-
-plotData.y = zeros(length(plotData.ySol), 18);
-
-for n=1:9
-    switch genCoord.logiVec(n)
-        case 1  % Ergebnisvektor mit definiertem q beschreiben
-            syms qTemp(t) qDotTemp(t) qDotDotTemp(t)
-            qTemp(t) = genCoord.qsDefined(qDefinedCount);
-            plotData.y(:,n) = [qTemp(plotData.time)]';  % q
-            qDotTemp(t) = diff(genCoord.qsDefined(qDefinedCount), t);
-            plotData.y(:,n+9) = [qDotTemp(plotData.time)]'; % qpkt
-            
-            qDefinedCount = qDefinedCount + 1;
-
-        case 0  % Ergebnisvektor mit ode-Ergebnis beschreiben
-            plotData.y(:,n) = plotData.ySol(:,qFreeCount);  % q
-            plotData.y(:,n+9) = plotData.ySol(:,qFreeCount+length(genCoord.qsFree));    % qpkt
-            qFreeCount = qFreeCount + 1;
-    end
-end
-clearvars qFreeCount qDefinedCount qTemp qDotTemp n
 
 %% Update Plot
 tic;

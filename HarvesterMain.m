@@ -9,15 +9,12 @@ syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
 genCoord.logiVec = logical([1; 1; 1; 1; 0; 0; 0; 1; 1]); % 1 = definiert, 0 = frei
 
-q_1(t) = deg2rad(45*sin(t));
-q_2(t) = deg2rad(45 + 10*sin(t));
+q_1(t) = deg2rad(15*sin(t));
+q_2(t) = deg2rad(45);
 q_3(t) = deg2rad(-45);
 q_4(t) = 1;
 q_8(t) = deg2rad(90);
 q_9(t) = 0;
-
-initConditions = ...
-    [deg2rad(-90); deg2rad(0); deg2rad(45); 0; 0; 0];
 
 %% Ab hier muss nichts geändert werden
 
@@ -308,10 +305,30 @@ V = ...
     dData.mass.m10*dData.g*cog.SP_10_0(2);    % Body 10
 
 %% Lagrangian Mechanics for Torques and Forces
+% nur ausführbar, wenn alle Freiheitsgrade offen sind
 
-% L = T - V;
-% 
-% Mq1 = 
+if length(genCoord.qsFree) == 9 
+    L = T - V;
+
+    syms q1 q2 q3 q4 q5 q6 q7 q8 q9
+    syms q1d q2d q3d q4d q5d q6d q7d q8d q9d
+    syms q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd
+
+    MnF.qVec = [q1; q2; q3; q4; q5; q6; q7; q8; q9];
+    MnF.qdVec = [q1d; q2d; q3d; q4d; q5d; q6d; q7d; q8d; q9d];
+    MnF.qddVec = [q1dd; q2dd; q3dd; q4dd; q5dd; q6dd; q7dd; q8dd; q9dd];
+
+    for n=1:9
+        MnF.(strcat('q_', num2str(n))) = diff(L, diff(genCoord.qsTotal(n), t), t) - diff(L, genCoord.qsTotal(n));
+        for i=1:9
+            MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t, t), MnF.qddVec(i));
+            MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t), MnF.qdVec(i));
+            MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), genCoord.qsTotal(i), MnF.qVec(i));
+        end
+    end
+
+    clearvars n i q1 q2 q3 q4 q5 q6 q7 q8 q9 q1d q2d q3d q4d q5d q6d q7d q8d q9d q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd
+end
 
 
 %% Partielle Ableitungen
@@ -402,6 +419,18 @@ for n=1:9
     end
 end
 clearvars qFreeCount qDefinedCount qTemp qDotTemp n
+
+%% Joint Torque and Forces
+plotData.MnF.q_1 = MnF.q_1;
+
+for n=1:9
+    tic;
+    plotData.MnF.q_1 = subs(plotData.MnF.q_1, MnF.qVec(n), plotData.y(:,n));
+    plotData.MnF.q_1 = subs(plotData.MnF.q_1, MnF.qdVec(n), plotData.yd(:,n));
+    plotData.MnF.q_1 = subs(plotData.MnF.q_1, MnF.qddVec(n), plotData.ydd(:,n));
+    toc
+    disp(num2str(n))
+end
 
 %% Plot Validation (Koordinatensysteme, Schwerpunkte) 
 
