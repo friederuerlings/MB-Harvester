@@ -7,13 +7,12 @@ tic;
 % generalized coordinates
 syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-genCoord.logiVec = logical([1; 1; 1; 1; 0; 0; 0; 1; 1]); % 1 = definiert, 0 = frei
+genCoord.logiVec = logical([1; 1; 1; 1; 0; 0; 0; 0; 1]); % 1 = definiert, 0 = frei
 
-q_1(t) = deg2rad(15*sin(t));
+q_1(t) = deg2rad(4t*heaviside(4-t));
 q_2(t) = deg2rad(45);
 q_3(t) = deg2rad(-45);
 q_4(t) = 1;
-q_8(t) = deg2rad(90);
 q_9(t) = 0;
 
 %% Ab hier muss nichts geändert werden
@@ -190,10 +189,18 @@ vcog.vSP_8_0 = simplify(diff(cog.SP_8_0, t));
 vcog.vSP_9_0 = simplify(diff(cog.SP_9_0, t));
 vcog.vSP_10_0 = simplify(diff(cog.SP_10_0, t));
 
+%% Visuelle Punkte für Darstellung der Körper
 % Baumstamm darstellen (Endpunkte)
 coordSys.BS_1 = coordSys.KS_10 + rotMat.T100*[3; 0; 0];
 coordSys.BS_2 = coordSys.KS_10 + rotMat.T100*[-3; 0; 0];
 coordSys.sumBS = [coordSys.BS_1 coordSys.BS_2];
+
+% Body 1
+coordSys.Body_1.P1 = coordSys.KS_1 + rotMat.T10*[3; 0; 0];
+coordSys.Body_1.P2 = coordSys.KS_1 + rotMat.T10*[-3; 0; 0];
+coordSys.Body_1.P3 = coordSys.KS_1 + rotMat.T10*[3; 0; 2];
+coordSys.Body_1.P4 = coordSys.KS_1 + rotMat.T10*[-3; 0; 2];
+coordSys.Body_1.sum = [coordSys.Body_1.P1 coordSys.Body_1.P2 coordSys.Body_1.P3 coordSys.Body_1.P4];
 
 
 %% Energien berechnen
@@ -318,9 +325,9 @@ if length(genCoord.qsFree) == 9
     MnF.qdVec = [q1d; q2d; q3d; q4d; q5d; q6d; q7d; q8d; q9d];
     MnF.qddVec = [q1dd; q2dd; q3dd; q4dd; q5dd; q6dd; q7dd; q8dd; q9dd];
 
-    for n=1:9
+    for n=1:9 %MFqn = (d/dt)(dL/dqnpkt)-(dL/dqn)
         MnF.(strcat('q_', num2str(n))) = diff(L, diff(genCoord.qsTotal(n), t), t) - diff(L, genCoord.qsTotal(n));
-        for i=1:9
+        for i=1:9   % substituiert diff(q_n, t, t) => qndd; diff(q_n, t) => qnd; q_n => qn / wird später zum Einsetzen benötigt
             MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t, t), MnF.qddVec(i));
             MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t), MnF.qdVec(i));
             MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), genCoord.qsTotal(i), MnF.qVec(i));
@@ -328,6 +335,11 @@ if length(genCoord.qsFree) == 9
     end
 
     clearvars n i q1 q2 q3 q4 q5 q6 q7 q8 q9 q1d q2d q3d q4d q5d q6d q7d q8d q9d q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd
+
+    % Function Handle -> ermöglicht das Einsetzen der Ergebnisvektoren 
+    MnF.qFunHandle = matlabFunction(MnF.q_1, MnF.q_2, MnF.q_3, MnF.q_4, MnF.q_5, MnF.q_6, MnF.q_7, MnF.q_8, MnF.q_9);
+else
+    load('MnF.mat');
 end
 
 
@@ -370,10 +382,7 @@ FF = matlabFunction(rhsVector, 'vars', {t, genCoord.vecY});
 toc
 tic;
 
-% initConditions = ...
-%     [deg2rad(90); deg2rad(-90); deg2rad(0); deg2rad(45); deg2rad(90); 0; 0; 0; 0; 0];
-
-simu.initCon = [deg2rad(90); deg2rad(-90); deg2rad(0); deg2rad(45); deg2rad(90); ...
+simu.initCon = [deg2rad(135); deg2rad(-90); deg2rad(45); deg2rad(45); deg2rad(90); ...
     0; 0; 0; 0; 0];
 simu.timeInterv = [0 10];
 
@@ -422,7 +431,7 @@ clearvars qFreeCount qDefinedCount qTemp qDotTemp n
 
 %% Joint Torque and Forces
 
-MnF.qFunHandle = matlabFunction(MnF.q_1, MnF.q_2, MnF.q_3, MnF.q_4, MnF.q_5, MnF.q_6, MnF.q_7, MnF.q_8, MnF.q_9);
+%Einsetzen der Ergebnisse zur Berechnung der Momente und Kräfte in Gelenken
 [q1MF, q2MF, q3MF, q4MF, q5MF, q6MF, q7MF, q8MF, q9MF] = ...
     MnF.qFunHandle(plotData.y(:,1),plotData.y(:,2), plotData.y(:,3), plotData.y(:,4), plotData.y(:,5), plotData.y(:,6), plotData.y(:,7), plotData.y(:,8), plotData.y(:,9), ...
     plotData.yd(:,1),plotData.yd(:,2),plotData.yd(:,3),plotData.yd(:,4),plotData.yd(:,5),plotData.yd(:,6),plotData.yd(:,7),plotData.yd(:,8),plotData.yd(:,9), ...
@@ -430,44 +439,6 @@ MnF.qFunHandle = matlabFunction(MnF.q_1, MnF.q_2, MnF.q_3, MnF.q_4, MnF.q_5, MnF
 plotData.MnF = [q1MF, q2MF, q3MF, q4MF, q5MF, q6MF, q7MF, q8MF, q9MF];
 clearvars q1MF q2MF q3MF q4MF q5MF q6MF q7MF q8MF q9MF
 
-%% Plot Validation (Koordinatensysteme, Schwerpunkte) 
-
-% SP_0 = [SP_1_0 SP_2_0 SP_3_0 SP_4_0 SP_5_0 SP_6_0 SP_7_0 SP_8_0 SP_9_0 SP_10_0];
-% SP_0 = subs(SP_0, qVec, [deg2rad(45) deg2rad(45) deg2rad(-45) 1 deg2rad(-90) deg2rad(0) deg2rad(45) deg2rad(90) 0]);
-% 
-% BS_0 = [BS_1 BS_2];
-% BS_0 = subs(BS_0, qVec, [deg2rad(45) deg2rad(45) deg2rad(-45) 1 deg2rad(-90) deg2rad(0) deg2rad(45) deg2rad(90) 0]);
-% 
-% KS_0 = [KS_1 KS_2 KS_3 KS_4 KS_5 KS_6 KS_7 KS_8 KS_9 KS_10];
-% KS_0 = subs(KS_0, qVec, [deg2rad(45) deg2rad(45) deg2rad(-45) 1 deg2rad(-90) deg2rad(0) deg2rad(45) deg2rad(90) 0]);
-% 
-% plot3(KS_0(1,:),KS_0(3,:),KS_0(2,:),'-o');
-% hold on
-% plot3(BS_0(1,:),BS_0(3,:),BS_0(2,:),'-o');
-% % plot3(SP_0(1,:),SP_0(3,:),SP_0(2,:),'.');
-% axis([0 20 0 20 0 15])
-% grid
-
-%% Plot Start and End of Simulation
-
-% time = linspace(sol.x(1),sol.x(end), 30);
-% y = transpose(deval(sol, time));
-% 
-% figure('Name', 'Start and End')
-% KS_0 = [KS_1 KS_2 KS_3 KS_4 KS_5 KS_6 KS_7 KS_8 KS_9 KS_10];
-% BS_0 = [BS_1 BS_2];
-% 
-% % Start Conditions
-% KS_0_start = subs(KS_0, qVec, [y(1,1) y(1,3) y(1,5) y(1,7) y(1,9) y(1,11) y(1,13) y(1,15) y(1,17)]);
-% plot3(KS_0_start(1,:),KS_0_start(3,:),KS_0_start(2,:),'-o');
-% hold on
-% % Final Conditions
-% KS_0_end = subs(KS_0, qVec, [y(end,1) y(end,3) y(end,5) y(end,7) y(end,9) y(end,11) y(end,13) y(end,15) y(end,17)]);
-% plot3(KS_0_end(1,:),KS_0_end(3,:),KS_0_end(2,:),'-o');
-% axis([0 20 0 20 0 15])
-% view(3, 10)
-% set(gcf,'position',[100,100,1000,600])
-% grid
 
 %% Update Plot
 tic;
@@ -479,19 +450,38 @@ plotData.subsVec = [q_1(t) q_2(t) q_3(t) q_4(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(
 CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
 CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
 
+% for i=1:1
+%     vidPlot.(strcat('Body_', num2str(i))).temp = ...
+%         subs(coordSys.(strcat('Body_', num2str(i))).sum, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
+% end
+
 % XYZ definieren für Harvester Plot
-vidPlotHarv = plot3(CSPlotHarvTemp(1),CSPlotHarvTemp(3),CSPlotHarvTemp(2),'-o');
-vidPlotHarv.XDataSource = 'CSPlotHarv_X';
-vidPlotHarv.YDataSource = 'CSPlotHarv_Y';
-vidPlotHarv.ZDataSource = 'CSPlotHarv_Z';
+vidPlot.Harv = plot3(CSPlotHarvTemp(1),CSPlotHarvTemp(3),CSPlotHarvTemp(2),'-o');
+vidPlot.Harv.XDataSource = 'CSPlotHarv_X';
+vidPlot.Harv.YDataSource = 'CSPlotHarv_Y';
+vidPlot.Harv.ZDataSource = 'CSPlotHarv_Z';
 
 hold on
 
 % XYZ definieren für Tree Plot
-vidPlotTree = plot3(CSPlotTreeTemp(1),CSPlotTreeTemp(3),CSPlotTreeTemp(2),'-o');
-vidPlotTree.XDataSource = 'CSPlotTree_X';
-vidPlotTree.YDataSource = 'CSPlotTree_Y';
-vidPlotTree.ZDataSource = 'CSPlotTree_Z';
+vidPlot.Tree = plot3(CSPlotTreeTemp(1),CSPlotTreeTemp(3),CSPlotTreeTemp(2),'-o');
+vidPlot.Tree.XDataSource = 'CSPlotTree_X';
+vidPlot.Tree.YDataSource = 'CSPlotTree_Y';
+vidPlot.Tree.ZDataSource = 'CSPlotTree_Z';
+
+% XYZ definieren für Skelette
+% for n=1:1
+%     vidPlot.(strcat('Body_', num2str(n))).plot = plot3(...
+%         vidPlot.(strcat('Body_', num2str(n))).temp(1),...
+%         vidPlot.(strcat('Body_', num2str(n))).temp(3),...
+%         vidPlot.(strcat('Body_', num2str(n))).temp(2),'-o');
+% 
+%     vidPlot.(strcat('Body_', num2str(n))).dataString = ...
+%         [strcat('Body', num2str(n),'_X'); strcat('Body', num2str(n),'_Y'); strcat('Body', num2str(n),'_Z')];
+%     vidPlot.(strcat('Body_', num2str(n))).XDataSource = vidPlot.(strcat('Body_', num2str(n))).dataString(1);
+%     vidPlot.(strcat('Body_', num2str(n))).YDataSource = vidPlot.(strcat('Body_', num2str(n))).dataString(2);
+%     vidPlot.(strcat('Body_', num2str(n))).ZDataSource = vidPlot.(strcat('Body_', num2str(n))).dataString(3);
+% end
 
 axis([-15 15 0 20 -15 15])
 view(-76, 17)
@@ -501,6 +491,15 @@ grid
 for n = 1:3:length(plotData.y)
     CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
     CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
+
+%     for i=1:1
+%         vidPlot.(strcat('Body_', num2str(i))).temp = ...
+%             subs(coordSys.(strcat('Body_', num2str(i))).sum, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
+%         vidPlot.(strcat('Body_', num2str(i))).dataString(1) = vidPlot.(strcat('Body_', num2str(i))).temp(1,:);
+%         vidPlot.(strcat('Body_', num2str(i))).dataString(2) = vidPlot.(strcat('Body_', num2str(i))).temp(3,:);
+%         vidPlot.(strcat('Body_', num2str(i))).dataString(3) = vidPlot.(strcat('Body_', num2str(i))).temp(2,:);
+% 
+%     end
 
     CSPlotHarv_X = CSPlotHarvTemp(1,:);
     CSPlotHarv_Y = CSPlotHarvTemp(3,:);
@@ -519,3 +518,14 @@ clearvars n CSPlotHarv_X CSPlotHarv_Y CSPlotHarv_Z CSPlotTree_X CSPlotTree_Y CSP
     CSPlotHarvTemp CSPlotTreeTemp
 
 toc
+
+%% Plot Moments and Forces
+
+figure('Name', 'Moments and Forces')
+plot(plotData.time, plotData.MnF)
+set(gcf, 'Position', [100 100 900 400])
+xlabel('time [s]')
+ylabel('Moment [Nm] / Force [N]')
+title('Moments and Forces')
+legend('q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9')
+grid
