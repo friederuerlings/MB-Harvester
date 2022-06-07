@@ -7,17 +7,16 @@ tic;
 % generalized coordinates
 syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-genCoord.logiVec = logical([1; 1; 1; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
+genCoord.logiVec = logical([0; 1; 0; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
 
 
 q_2(t) = deg2rad(90);
-q_3(t) = deg2rad(0);
 q_4(t) = 1;
 q_5(t) = deg2rad(0);
-q_6(t) = deg2rad(0);;
+q_6(t) = deg2rad(0);
 q_7(t) = deg2rad(0);
-q_8(t) = 
-q_9(t) = 0.2;
+q_8(t) = deg2rad(0);
+q_9(t) = 0;
 
 %% Ab hier muss nichts geändert werden
 
@@ -41,58 +40,58 @@ dData.x_J910 = 0;      % Versatz des Baumstamms
 dData.g = 9.81;        % Erdbeschleunigung
 
 % Mass
-dData.mass.m1 = 9.14e+4;       % Masse Body 1
-dData.mass.m2 = 2.89e+3;       % Masse Body 2
-dData.mass.m3 = 1.57e+3;       % Masse Body 3
-dData.mass.m4 = 2.12e+3;       % Masse Body 4
-dData.mass.m5 = 6.28e+2;       % Masse Body 5
-dData.mass.m6 = 9.42e+1;       % Masse Body 6
-dData.mass.m7 = 1.25e+2;       % Masse Body 7
-dData.mass.m8 = 7.06e+2;       % Masse Body 8
-dData.mass.m9 = 3.5e+3;        % Masse Body 9
-dData.mass.m10 = 1.81e+4;      % Masse Body 10
+dData.mass.m1 = 1.67e+4;       % Masse Body 1
+dData.mass.m2 = 1.17e+3;       % Masse Body 2
+dData.mass.m3 = 1.11e+3;       % Masse Body 3
+dData.mass.m4 = 1.48e+3;       % Masse Body 4
+dData.mass.m5 = 4.10e+2;       % Masse Body 5
+dData.mass.m6 = 6.93e+1;       % Masse Body 6
+dData.mass.m7 = 6.93e+1;       % Masse Body 7
+dData.mass.m8 = 2.42e+2;       % Masse Body 8
+dData.mass.m9 = 1.60e+3;        % Masse Body 9
+dData.mass.m10 = 1.17e+3;      % Masse Body 10
 
 % Inertia-Matrix
 dData.mMat.mm_1_1 = ...                  % Inertia-Matrix Body 1
-    [5.9723210e+04 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.0290949e+05 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 1.5841635e+05];
+    [2.0775374e+04 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 5.1254127e+04 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 4.2589749e+04];
 dData.mMat.mm_2_2 = ...                  % Inertia-Matrix Body 2
-    [2.3900122e+02 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.4195990e+02 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 2.3900123e+02];
+    [1.8854537e+02 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 1.4690909e+02 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 1.8854537e+02];
 dData.mMat.mm_3_3 =...                   % Inertia-Matrix Body 3
-    [1.0466667e+01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 3.2760667e+03 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 3.2760667e+03];
+    [1.0042909e+01 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 2.8586474e+03 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 2.8586474e+03];
 dData.mMat.mm_4_4 =...                   % Inertia-Matrix Body 4
-    [3.1792500e+01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 1.6055213e+03 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 1.6055213e+03];
+    [3.3851210e+01 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 2.5819910e+03 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 2.5819910e+03];
 dData.mMat.mm_5_5 =...                   % Inertia-Matrix Body 5
-    [4.1866667e+00 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.1142667e+02 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 2.1142667e+02];
+    [3.6657783e+00 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 1.4449252e+02 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 1.4449252e+02];
 dData.mMat.mm_6_6 =...                   % Inertia-Matrix Body 6
-    [6.2800000e-01 0.0000000e+00 0.0000000e+00;...
+    [5.6831488e-01 0.0000000e+00 0.0000000e+00;...
     0.0000000e+00 1.0205000e+00 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 1.0205000e+00];
+    0.0000000e+00 0.0000000e+00 8.9035328e-01];
 dData.mMat.mm_7_7 =...                   % Inertia-Matrix Body 7
-    [8.3733333e-01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.0933333e+00 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 2.0933333e+00];
+    [5.6831488e-01 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 8.9035328e-01 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 8.9035328e-01];
 dData.mMat.mm_8_8 =...                   % Inertia-Matrix Body 8
-    [1.0597500e+01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 6.4173750e+01 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 6.4173750e+01];
+    [5.1414109e+00 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 1.2875733e+01 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 1.2875733e+01];
 dData.mMat.mm_9_9 =...                   % Inertia-Matrix Body 9
-    [3.2205222e+02 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 3.2205223e+02 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 4.9807341e+02];
+    [1.9937447e+02 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 1.9937448e+02 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 2.9385014e+02];
 dData.mMat.mm_10_10 =...                 % Inertia-Matrix Body 10
-    [1.1102300e+03 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 5.4933735e+04 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 5.4933720e+04];
+    [3.6815539e+01 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 9.8358851e+03 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 9.8358846e+03];
 
 %% Rotation-Matrix
 
@@ -318,8 +317,9 @@ V = ...
 %% Lagrangian Mechanics for Torques and Forces
 % nur ausführbar, wenn alle Freiheitsgrade offen sind
 
+L = T - V;
+
 if length(genCoord.qsFree) == 9 
-    L = T - V;
 
     syms q1 q2 q3 q4 q5 q6 q7 q8 q9
     syms q1d q2d q3d q4d q5d q6d q7d q8d q9d
@@ -349,16 +349,33 @@ end
 
 %% Partielle Ableitungen
 
+% for n=1:length(genCoord.qsFree)
+%     dTdq(n) = diff(T, genCoord.qsFree(n));
+%     dqdt(n) = diff(genCoord.qsFree(n), t);
+%     dTdqpktdt(n) = diff(T, dqdt(n), t);
+%     dVdq(n) = diff(V, genCoord.qsFree(n));
+% end
+% clearvars n
+
+% Equations of Motion
+% EOMs = dTdqpktdt - dTdq + dVdq;
+
 for n=1:length(genCoord.qsFree)
-    dTdq(n) = diff(T, genCoord.qsFree(n));
     dqdt(n) = diff(genCoord.qsFree(n), t);
-    dTdqpktdt(n) = diff(T, dqdt(n), t);
-    dVdq(n) = diff(V, genCoord.qsFree(n));
+    dLdq(n) = diff(L, genCoord.qsFree(n));
+    dLdqpdt(n) = diff(L, dqdt(n), t);
+    
 end
 clearvars n
 
+% Dämpfungsterm
+for n=1:length(genCoord.qsFree)
+    D = 
+    dDdqp(n) = diff()
+end
+
 % Equations of Motion
-EOMs = dTdqpktdt - dTdq + dVdq;
+EOMs = dLdqpdt - dLdq;
 
 %% Preparing Equations of Motion
 
@@ -386,9 +403,9 @@ FF = matlabFunction(rhsVector, 'vars', {t, genCoord.vecY});
 toc
 tic;
 
-simu.initCon = [deg2rad(134); deg2rad(-90); deg2rad(0); deg2rad(45); deg2rad(90); ...
-    0; 0; 0; 0; 0];
-simu.timeInterv = [0 10];
+simu.initCon = [deg2rad(0); deg2rad(10);  ...
+    0; 0];
+simu.timeInterv = [0 20];
 
 opt = odeset('Mass', MM, 'MaxStep', 1e-2);
 sol = ode45(FF, simu.timeInterv, simu.initCon, opt);
