@@ -7,16 +7,18 @@ tic;
 % generalized coordinates
 syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-genCoord.logiVec = logical([0; 1; 0; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
+% genCoord.logiVec = logical([0; 1; 0; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
+genCoord.logiVec = logical([1; 1; 1; 1; 1; 1; 1; 0; 1]); % 1 = definiert, 0 = frei
 
-
+q_1(t) = deg2rad(0);
 q_2(t) = deg2rad(90);
+q_3(t) = deg2rad(0);
 q_4(t) = 1;
 q_5(t) = deg2rad(0);
 q_6(t) = deg2rad(0);
 q_7(t) = deg2rad(0);
-q_8(t) = deg2rad(0);
-q_9(t) = 0;
+% q_8(t) = deg2rad(90);
+q_9(t) = 3;
 
 %% Ab hier muss nichts geändert werden
 
@@ -27,9 +29,9 @@ genCoord.qsFree = genCoord.qsTotal(~genCoord.logiVec);
 
 %% DESIGN DATA
 
-dData.x_0 = 6;         % Harvester Versatz in X
+dData.x_0 = 0;         % Harvester Versatz in X
 dData.y_0 = 1;         % Harvester Versatz in Y
-dData.z_0 = 12;        % Harvester Versatz in Z
+dData.z_0 = 0;         % Harvester Versatz in Z
 dData.y_J12 = 0.5;     % Höhe von Body 2
 dData.x_J33 = 5;       % Länge von Body 3
 dData.x_J44 = 3;       % Länge von Body 4
@@ -314,11 +316,18 @@ V = ...
     dData.mass.m9*dData.g*cog.SP_9_0(2)+...   % Body 9
     dData.mass.m10*dData.g*cog.SP_10_0(2);    % Body 10
 
-%% Lagrangian Mechanics for Torques and Forces
+%% Lagrangian Mechanics 
 % nur ausführbar, wenn alle Freiheitsgrade offen sind
 
 L = T - V;
 
+% Dämpfung d in Gelenken
+dData.damping.all = [15000; 15000; 10000; 0; 2000; 2000; 1000; 5000; 0]; % Translationsgelenke q4, q9 ohne Dämpfung
+% Dämpfung für freie Gelenke definieren
+dData.damping.free = dData.damping.all(~genCoord.logiVec);
+
+% berechnet die Bewegungsgleichungen mit allen Freiheitsgraden (benötigt
+% für Momente und Kräfte)
 if length(genCoord.qsFree) == 9 
 
     syms q1 q2 q3 q4 q5 q6 q7 q8 q9
@@ -329,8 +338,10 @@ if length(genCoord.qsFree) == 9
     MnF.qdVec = [q1d; q2d; q3d; q4d; q5d; q6d; q7d; q8d; q9d];
     MnF.qddVec = [q1dd; q2dd; q3dd; q4dd; q5dd; q6dd; q7dd; q8dd; q9dd];
 
-    for n=1:9 %MFqn = (d/dt)(dL/dqnpkt)-(dL/dqn)
-        MnF.(strcat('q_', num2str(n))) = diff(L, diff(genCoord.qsTotal(n), t), t) - diff(L, genCoord.qsTotal(n));
+    for n=1:9 %MFqn = (d/dt)(dL/dqnpkt)-(dL/dqn) + (dD/dqdt)
+        Dtemp = 0.5*dData.damping.all(n)*(diff(genCoord.qsTotal(n), t))^2; % Dissipationsfunktion für Dämpfung Dn = 1/2 * dn * |vrel|²
+        MnF.(strcat('q_', num2str(n))) = diff(L, diff(genCoord.qsTotal(n), t), t) - diff(L, genCoord.qsTotal(n)) + ...
+            diff(Dtemp, diff(genCoord.qsTotal(n), t));
         for i=1:9   % substituiert diff(q_n, t, t) => qndd; diff(q_n, t) => qnd; q_n => qn / wird später zum Einsetzen benötigt
             MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t, t), MnF.qddVec(i));
             MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t), MnF.qdVec(i));
@@ -338,17 +349,21 @@ if length(genCoord.qsFree) == 9
         end
     end
 
-    clearvars n i q1 q2 q3 q4 q5 q6 q7 q8 q9 q1d q2d q3d q4d q5d q6d q7d q8d q9d q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd
+    clearvars n i q1 q2 q3 q4 q5 q6 q7 q8 q9 q1d q2d q3d q4d q5d q6d q7d q8d q9d q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd Dtemp
 
     % Function Handle -> ermöglicht das Einsetzen der Ergebnisvektoren 
     MnF.qFunHandle = matlabFunction(MnF.q_1, MnF.q_2, MnF.q_3, MnF.q_4, MnF.q_5, MnF.q_6, MnF.q_7, MnF.q_8, MnF.q_9);
 else
+    % läd die Bewegungsgleichung für Momente und Kräfte
     load('MnF.mat');
 end
 
 
-%% Equations of Motion
 
+
+%% Lagrangian Mechanics (mit eingeschränkten Freiheitsgraden)
+
+% Partielle Ableitungen berechnen
 for n=1:length(genCoord.qsFree)
     dqdt(n) = diff(genCoord.qsFree(n), t);
     dLdq(n) = diff(L, genCoord.qsFree(n));
@@ -358,9 +373,8 @@ end
 clearvars n
 
 % Dämpfungsterm
-dData.d = 5000;
 for n=1:length(genCoord.qsFree)
-    D(n) = 0.5*dData.d*(dqdt(n)^2); % Dn = 1/2 * d * |vrel|²
+    D(n) = 0.5*dData.damping.free(n)*(dqdt(n)^2); % Dn = 1/2 * dn * |vrel|²
     dDdqp(n) = diff(D(n), dqdt(n));
 end
 
@@ -390,17 +404,22 @@ MM = matlabFunction(massMatrix, 'vars', {t, genCoord.vecY});
 FF = matlabFunction(rhsVector, 'vars', {t, genCoord.vecY});
 
 %% Simulation
-toc
-tic;
 
-simu.initCon = [deg2rad(0); deg2rad(10);  ...
-    0; 0];
+if length(genCoord.qsFree) == 9
+    % Init für alle Freiheitsgrade
+    simu.initCon = [deg2rad(0); deg2rad(45); deg2rad(-45); 1; deg2rad(-90); deg2rad(0); deg2rad(0); deg2rad(0); 0; ...
+        0; 0; 0; 0; 0; 0; 0; 0; 0];
+else
+    % Init für eingeschränkte Freiheitsgrade
+    simu.initCon = [deg2rad(45);  ...
+        deg2rad(0)];
+end
+
 simu.timeInterv = [0 20];
 
 opt = odeset('Mass', MM, 'MaxStep', 1e-2);
 sol = ode45(FF, simu.timeInterv, simu.initCon, opt);
 clearvars opt 
-toc
 
 %% Ergebnisvektor erstellen
 plotData.nSteps = 200;
@@ -442,14 +461,14 @@ clearvars qFreeCount qDefinedCount qTemp qDotTemp n
 
 %% Joint Torque and Forces
 
-%Einsetzen der Ergebnisse zur Berechnung der Momente und Kräfte in Gelenken
+% Einsetzen der Ergebnisse (y, yd, ydd) in Bewegungsgleichung mit allen Freiheitsgraden 
+% zur Berechnung der Momente und Kräfte in Gelenken
 [q1MF, q2MF, q3MF, q4MF, q5MF, q6MF, q7MF, q8MF, q9MF] = ...
     MnF.qFunHandle(plotData.y(:,1),plotData.y(:,2), plotData.y(:,3), plotData.y(:,4), plotData.y(:,5), plotData.y(:,6), plotData.y(:,7), plotData.y(:,8), plotData.y(:,9), ...
     plotData.yd(:,1),plotData.yd(:,2),plotData.yd(:,3),plotData.yd(:,4),plotData.yd(:,5),plotData.yd(:,6),plotData.yd(:,7),plotData.yd(:,8),plotData.yd(:,9), ...
     plotData.ydd(:,1),plotData.ydd(:,2),plotData.ydd(:,3),plotData.ydd(:,4),plotData.ydd(:,5),plotData.ydd(:,6),plotData.ydd(:,7),plotData.ydd(:,8),plotData.ydd(:,9));
 plotData.MnF = [q1MF, q2MF, q3MF, q4MF, q5MF, q6MF, q7MF, q8MF, q9MF];
 clearvars q1MF q2MF q3MF q4MF q5MF q6MF q7MF q8MF q9MF
-
 
 %% Update Plot
 tic;
@@ -494,12 +513,12 @@ vidPlot.Tree.ZDataSource = 'CSPlotTree_Z';
 %     vidPlot.(strcat('Body_', num2str(n))).ZDataSource = vidPlot.(strcat('Body_', num2str(n))).dataString(3);
 % end
 
-axis([-15 15 0 20 -15 15])
-view(-76, 17)
+axis([-15 15 -15 15 -15 15])
+view(0, 0)
 set(gcf,'position',[50,50,1000,900])
 grid
 
-for n = 1:3:length(plotData.y)
+for n = 1:1:length(plotData.y)
     CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
     CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
 
