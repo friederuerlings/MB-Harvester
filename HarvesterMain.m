@@ -513,7 +513,7 @@ vidPlot.Tree.ZDataSource = 'CSPlotTree_Z';
 %     vidPlot.(strcat('Body_', num2str(n))).ZDataSource = vidPlot.(strcat('Body_', num2str(n))).dataString(3);
 % end
 
-axis([-15 15 -15 15 -15 15])
+axis([-15 15 -15 15 0 30])
 view(45, 45)
 set(gcf,'position',[50,50,1000,900])
 grid
