@@ -3,22 +3,22 @@ clear
 close all
 
 %% Initialisierung
-tic;
+
 % generalized coordinates
 syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-% genCoord.logiVec = logical([0; 1; 0; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
-genCoord.logiVec = logical([1; 1; 1; 1; 1; 1; 1; 0; 1]); % 1 = definiert, 0 = frei
+genCoord.logiVec = logical([0; 1; 1; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
+% genCoord.logiVec = logical([0; 0; 0; 0; 0; 0; 0; 0; 0]); % 1 = definiert, 0 = frei
 
-q_1(t) = deg2rad(0);
+% q_1(t) = deg2rad(0);
 q_2(t) = deg2rad(90);
 q_3(t) = deg2rad(0);
 q_4(t) = 1;
 q_5(t) = deg2rad(0);
 q_6(t) = deg2rad(0);
 q_7(t) = deg2rad(0);
-% q_8(t) = deg2rad(90);
-q_9(t) = 3;
+q_8(t) = deg2rad(0);
+q_9(t) = 0;
 
 %% Ab hier muss nichts geändert werden
 
@@ -196,8 +196,8 @@ vcog.vSP_10_0 = simplify(diff(cog.SP_10_0, t));
 
 %% Visuelle Punkte für Darstellung der Körper
 % Baumstamm darstellen (Endpunkte)
-coordSys.BS_1 = coordSys.KS_10 + rotMat.T100*[3; 0; 0];
-coordSys.BS_2 = coordSys.KS_10 + rotMat.T100*[-3; 0; 0];
+coordSys.BS_1 = coordSys.KS_10 + rotMat.T100*[6; 0; 0];
+coordSys.BS_2 = coordSys.KS_10 + rotMat.T100*[-6; 0; 0];
 coordSys.sumBS = [coordSys.BS_1 coordSys.BS_2];
 
 % Body 1
@@ -206,7 +206,6 @@ coordSys.Body_1.P2 = coordSys.KS_1 + rotMat.T10*[-3; 0; 0];
 coordSys.Body_1.P3 = coordSys.KS_1 + rotMat.T10*[3; 0; 2];
 coordSys.Body_1.P4 = coordSys.KS_1 + rotMat.T10*[-3; 0; 2];
 coordSys.Body_1.sum = [coordSys.Body_1.P1 coordSys.Body_1.P2 coordSys.Body_1.P3 coordSys.Body_1.P4];
-
 
 %% Energien berechnen
 
@@ -222,6 +221,8 @@ T_trans = simplify( ...
     0.5*dData.mass.m8*transpose(vcog.vSP_8_0)*vcog.vSP_8_0+...    % Body 8
     0.5*dData.mass.m9*transpose(vcog.vSP_9_0)*vcog.vSP_9_0+...    % Body 9
     0.5*dData.mass.m10*transpose(vcog.vSP_10_0)*vcog.vSP_10_0);   % Body 10
+
+%% temp
 
 % Kinetische Energie (Rotation)
 
@@ -300,6 +301,7 @@ T_rot = simplify( ...
     1/2 * transpose(angVel.omega_9_0_0) * dData.mMat.mm_9_0 * angVel.omega_9_0_0 + ...  % Body 9
     1/2 * transpose(angVel.omega_10_0_0) * dData.mMat.mm_10_0 * angVel.omega_10_0_0);   % Body 10
 
+
 % Gesamte Kinetische Energie
 T = T_trans + T_rot;
 
@@ -359,8 +361,6 @@ else
 end
 
 
-
-
 %% Lagrangian Mechanics (mit eingeschränkten Freiheitsgraden)
 
 % Partielle Ableitungen berechnen
@@ -411,7 +411,7 @@ if length(genCoord.qsFree) == 9
         0; 0; 0; 0; 0; 0; 0; 0; 0];
 else
     % Init für eingeschränkte Freiheitsgrade
-    simu.initCon = [deg2rad(45);  ...
+    simu.initCon = [deg2rad(0); ...
         deg2rad(0)];
 end
 
@@ -514,7 +514,7 @@ vidPlot.Tree.ZDataSource = 'CSPlotTree_Z';
 % end
 
 axis([-15 15 -15 15 -15 15])
-view(0, 0)
+view(45, 45)
 set(gcf,'position',[50,50,1000,900])
 grid
 
