@@ -11,13 +11,13 @@ genCoord.logiVec = logical([0; 1; 1; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = fr
 % genCoord.logiVec = logical([0; 0; 0; 0; 0; 0; 0; 0; 0]); % 1 = definiert, 0 = frei
 
 % q_1(t) = deg2rad(0);
-q_2(t) = deg2rad(90);
-q_3(t) = deg2rad(0);
+q_2(t) = deg2rad(00);
+q_3(t) = deg2rad(90);
 q_4(t) = 1;
 q_5(t) = deg2rad(0);
 q_6(t) = deg2rad(0);
-q_7(t) = deg2rad(0);
-q_8(t) = deg2rad(0);
+q_7(t) = deg2rad(90);
+q_8(t) = deg2rad(90);
 q_9(t) = 0;
 
 %% Ab hier muss nichts geändert werden
