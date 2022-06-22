@@ -7,18 +7,18 @@ close all
 % generalized coordinates
 syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-genCoord.logiVec = logical([0; 1; 1; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
+genCoord.logiVec = logical([0; 1; 1; 1; 0; 0; 0; 0; 1]); % 1 = definiert, 0 = frei
 % genCoord.logiVec = logical([0; 0; 0; 0; 0; 0; 0; 0; 0]); % 1 = definiert, 0 = frei
 
 % q_1(t) = deg2rad(0);
-q_2(t) = deg2rad(00);
-q_3(t) = deg2rad(90);
-q_4(t) = 1;
-q_5(t) = deg2rad(0);
-q_6(t) = deg2rad(0);
-q_7(t) = deg2rad(90);
-q_8(t) = deg2rad(90);
-q_9(t) = 0;
+% q_2(t) = deg2rad(50);
+% q_3(t) = deg2rad(270);
+% q_4(t) = 1.5;
+% q_5(t) = deg2rad(0);
+% q_6(t) = deg2rad(0);
+% q_7(t) = deg2rad(90);
+% q_8(t) = deg2rad(90);
+% q_9(t) = 4;
 
 %% Ab hier muss nichts geändert werden
 
@@ -35,57 +35,57 @@ dData.z_0 = 0;         % Harvester Versatz in Z
 dData.y_J12 = 0.5;     % Höhe von Body 2
 dData.x_J33 = 5;       % Länge von Body 3
 dData.x_J44 = 3;       % Länge von Body 4
-dData.x_J66 = 0.3;     % Länge von Body 5
-dData.x_J77 = 0.4;     % Länge von Body 6
-dData.x_J88 = 1;       % Länge von Body 7
+dData.x_J66 = 0.3;     % Länge von Body 6
+dData.x_J77 = 0.3;     % Länge von Body 7
+dData.x_J88 = 1;       % Länge von Body 8
 dData.x_J910 = 0;      % Versatz des Baumstamms
 dData.g = 9.81;        % Erdbeschleunigung
 
 % Mass
-dData.mass.m1 = 1.67e+4;       % Masse Body 1
-dData.mass.m2 = 1.17e+3;       % Masse Body 2
-dData.mass.m3 = 1.11e+3;       % Masse Body 3
-dData.mass.m4 = 1.48e+3;       % Masse Body 4
+dData.mass.m1 = 1.40e+4;       % Masse Body 1
+dData.mass.m2 = 9.81e+2;       % Masse Body 2
+dData.mass.m3 = 1.01e+3;       % Masse Body 3
+dData.mass.m4 = 1.01e+3;       % Masse Body 4
 dData.mass.m5 = 4.10e+2;       % Masse Body 5
 dData.mass.m6 = 6.93e+1;       % Masse Body 6
 dData.mass.m7 = 6.93e+1;       % Masse Body 7
-dData.mass.m8 = 2.42e+2;       % Masse Body 8
-dData.mass.m9 = 1.60e+3;        % Masse Body 9
+dData.mass.m8 = 3.56e+2;       % Masse Body 8
+dData.mass.m9 = 1.60e+3;       % Masse Body 9
 dData.mass.m10 = 1.17e+3;      % Masse Body 10
 
 % Inertia-Matrix
 dData.mMat.mm_1_1 = ...                  % Inertia-Matrix Body 1
-    [2.0775374e+04 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 5.1254127e+04 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 4.2589749e+04];
+    [1.3719656e+04 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 4.0195849e+04 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 3.1267937e+04];
 dData.mMat.mm_2_2 = ...                  % Inertia-Matrix Body 2
-    [1.8854537e+02 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 1.4690909e+02 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 1.8854537e+02];
+    [1.2016446e+02 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 1.1882324e+02 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 1.2016447e+02];
 dData.mMat.mm_3_3 =...                   % Inertia-Matrix Body 3
-    [1.0042909e+01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.8586474e+03 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 2.8586474e+03];
+    [9.1318903e+00 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 2.1535198e+03 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 2.1535198e+03];
 dData.mMat.mm_4_4 =...                   % Inertia-Matrix Body 4
-    [3.3851210e+01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 2.5819910e+03 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 2.5819910e+03];
+    [2.2843140e+01 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 8.1276327e+02 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 8.1276327e+02];
 dData.mMat.mm_5_5 =...                   % Inertia-Matrix Body 5
     [3.6657783e+00 0.0000000e+00 0.0000000e+00;...
     0.0000000e+00 1.4449252e+02 0.0000000e+00;...
     0.0000000e+00 0.0000000e+00 1.4449252e+02];
 dData.mMat.mm_6_6 =...                   % Inertia-Matrix Body 6
     [5.6831488e-01 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 1.0205000e+00 0.0000000e+00;...
+    0.0000000e+00 8.9035328e-01 0.0000000e+00;...
     0.0000000e+00 0.0000000e+00 8.9035328e-01];
 dData.mMat.mm_7_7 =...                   % Inertia-Matrix Body 7
     [5.6831488e-01 0.0000000e+00 0.0000000e+00;...
     0.0000000e+00 8.9035328e-01 0.0000000e+00;...
     0.0000000e+00 0.0000000e+00 8.9035328e-01];
 dData.mMat.mm_8_8 =...                   % Inertia-Matrix Body 8
-    [5.1414109e+00 0.0000000e+00 0.0000000e+00;...
-    0.0000000e+00 1.2875733e+01 0.0000000e+00;...
-    0.0000000e+00 0.0000000e+00 1.2875733e+01];
+    [7.7778386e+00 0.0000000e+00 0.0000000e+00;...
+    0.0000000e+00 3.8109359e+01 0.0000000e+00;...
+    0.0000000e+00 0.0000000e+00 3.8109359e+01];
 dData.mMat.mm_9_9 =...                   % Inertia-Matrix Body 9
     [1.9937447e+02 0.0000000e+00 0.0000000e+00;...
     0.0000000e+00 1.9937448e+02 0.0000000e+00;...
@@ -143,7 +143,7 @@ cog.SP3_3 = [2.5; 0; 0];
 cog.SP4_4 = [1.5; 0; 0];
 cog.SP5_5 = [-1; 0; 0];
 cog.SP6_6 = [0.15; 0; 0];
-cog.SP7_7 = [0.2; 0; 0];
+cog.SP7_7 = [0.15; 0; 0];
 cog.SP8_8 = [0.5; 0; 0];
 cog.SP9_9 = [0; 0; 0];
 cog.SP10_10 = [0; 0; 0];
@@ -196,16 +196,9 @@ vcog.vSP_10_0 = simplify(diff(cog.SP_10_0, t));
 
 %% Visuelle Punkte für Darstellung der Körper
 % Baumstamm darstellen (Endpunkte)
-coordSys.BS_1 = coordSys.KS_10 + rotMat.T100*[6; 0; 0];
-coordSys.BS_2 = coordSys.KS_10 + rotMat.T100*[-6; 0; 0];
+coordSys.BS_1 = coordSys.KS_10 + rotMat.T100*[5; 0; 0];
+coordSys.BS_2 = coordSys.KS_10 + rotMat.T100*[-5; 0; 0];
 coordSys.sumBS = [coordSys.BS_1 coordSys.BS_2];
-
-% Body 1
-coordSys.Body_1.P1 = coordSys.KS_1 + rotMat.T10*[3; 0; 0];
-coordSys.Body_1.P2 = coordSys.KS_1 + rotMat.T10*[-3; 0; 0];
-coordSys.Body_1.P3 = coordSys.KS_1 + rotMat.T10*[3; 0; 2];
-coordSys.Body_1.P4 = coordSys.KS_1 + rotMat.T10*[-3; 0; 2];
-coordSys.Body_1.sum = [coordSys.Body_1.P1 coordSys.Body_1.P2 coordSys.Body_1.P3 coordSys.Body_1.P4];
 
 %% Energien berechnen
 
@@ -411,11 +404,11 @@ if length(genCoord.qsFree) == 9
         0; 0; 0; 0; 0; 0; 0; 0; 0];
 else
     % Init für eingeschränkte Freiheitsgrade
-    simu.initCon = [deg2rad(0); ...
-        deg2rad(0)];
+    simu.initCon = [deg2rad(0); deg2rad(320); deg2rad(15); deg2rad(130); deg2rad(197);...
+        deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0)];
 end
 
-simu.timeInterv = [0 20];
+simu.timeInterv = [0 10];
 
 opt = odeset('Mass', MM, 'MaxStep', 1e-2);
 sol = ode45(FF, simu.timeInterv, simu.initCon, opt);
@@ -480,11 +473,6 @@ plotData.subsVec = [q_1(t) q_2(t) q_3(t) q_4(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(
 CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
 CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
 
-% for i=1:1
-%     vidPlot.(strcat('Body_', num2str(i))).temp = ...
-%         subs(coordSys.(strcat('Body_', num2str(i))).sum, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
-% end
-
 % XYZ definieren für Harvester Plot
 vidPlot.Harv = plot3(CSPlotHarvTemp(1),CSPlotHarvTemp(3),CSPlotHarvTemp(2),'-o');
 vidPlot.Harv.XDataSource = 'CSPlotHarv_X';
@@ -499,20 +487,6 @@ vidPlot.Tree.XDataSource = 'CSPlotTree_X';
 vidPlot.Tree.YDataSource = 'CSPlotTree_Y';
 vidPlot.Tree.ZDataSource = 'CSPlotTree_Z';
 
-% XYZ definieren für Skelette
-% for n=1:1
-%     vidPlot.(strcat('Body_', num2str(n))).plot = plot3(...
-%         vidPlot.(strcat('Body_', num2str(n))).temp(1),...
-%         vidPlot.(strcat('Body_', num2str(n))).temp(3),...
-%         vidPlot.(strcat('Body_', num2str(n))).temp(2),'-o');
-% 
-%     vidPlot.(strcat('Body_', num2str(n))).dataString = ...
-%         [strcat('Body', num2str(n),'_X'); strcat('Body', num2str(n),'_Y'); strcat('Body', num2str(n),'_Z')];
-%     vidPlot.(strcat('Body_', num2str(n))).XDataSource = vidPlot.(strcat('Body_', num2str(n))).dataString(1);
-%     vidPlot.(strcat('Body_', num2str(n))).YDataSource = vidPlot.(strcat('Body_', num2str(n))).dataString(2);
-%     vidPlot.(strcat('Body_', num2str(n))).ZDataSource = vidPlot.(strcat('Body_', num2str(n))).dataString(3);
-% end
-
 axis([-15 15 -15 15 0 30])
 view(45, 45)
 set(gcf,'position',[50,50,1000,900])
@@ -521,15 +495,6 @@ grid
 for n = 1:1:length(plotData.y)
     CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
     CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
-
-%     for i=1:1
-%         vidPlot.(strcat('Body_', num2str(i))).temp = ...
-%             subs(coordSys.(strcat('Body_', num2str(i))).sum, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
-%         vidPlot.(strcat('Body_', num2str(i))).dataString(1) = vidPlot.(strcat('Body_', num2str(i))).temp(1,:);
-%         vidPlot.(strcat('Body_', num2str(i))).dataString(2) = vidPlot.(strcat('Body_', num2str(i))).temp(3,:);
-%         vidPlot.(strcat('Body_', num2str(i))).dataString(3) = vidPlot.(strcat('Body_', num2str(i))).temp(2,:);
-% 
-%     end
 
     CSPlotHarv_X = CSPlotHarvTemp(1,:);
     CSPlotHarv_Y = CSPlotHarvTemp(3,:);
