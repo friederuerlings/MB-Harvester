@@ -7,18 +7,18 @@ close all
 % generalized coordinates
 syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-genCoord.logiVec = logical([0; 1; 1; 1; 0; 0; 0; 0; 1]); % 1 = definiert, 0 = frei
+genCoord.logiVec = logical([0; 1; 1; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
 % genCoord.logiVec = logical([0; 0; 0; 0; 0; 0; 0; 0; 0]); % 1 = definiert, 0 = frei
 
 % q_1(t) = deg2rad(0);
-% q_2(t) = deg2rad(50);
-% q_3(t) = deg2rad(270);
-% q_4(t) = 1.5;
-% q_5(t) = deg2rad(0);
-% q_6(t) = deg2rad(0);
-% q_7(t) = deg2rad(90);
-% q_8(t) = deg2rad(90);
-% q_9(t) = 4;
+q_2(t) = deg2rad(0);
+q_3(t) = deg2rad(90);
+q_4(t) = 1;
+q_5(t) = deg2rad(0);
+q_6(t) = deg2rad(0);
+q_7(t) = deg2rad(90);
+q_8(t) = deg2rad(90);
+q_9(t) = 0;
 
 %% Ab hier muss nichts geändert werden
 
@@ -404,8 +404,10 @@ if length(genCoord.qsFree) == 9
         0; 0; 0; 0; 0; 0; 0; 0; 0];
 else
     % Init für eingeschränkte Freiheitsgrade
-    simu.initCon = [deg2rad(0); deg2rad(320); deg2rad(15); deg2rad(130); deg2rad(197);...
-        deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0)];
+    %     simu.initCon = [deg2rad(0); deg2rad(320); deg2rad(15); deg2rad(130); deg2rad(197);...
+    %         deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0)];
+    simu.initCon = [deg2rad(0);...
+        deg2rad(0)];
 end
 
 simu.timeInterv = [0 10];
