@@ -7,18 +7,21 @@ close all
 % generalized coordinates
 syms q_1(t) q_2(t) q_4(t) q_3(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t)
 
-genCoord.logiVec = logical([0; 1; 1; 1; 1; 1; 1; 1; 1]); % 1 = definiert, 0 = frei
+genCoord.logiVec = logical([1; 1; 1; 1; 0; 0; 0; 0; 1]); % 1 = definiert, 0 = frei
 % genCoord.logiVec = logical([0; 0; 0; 0; 0; 0; 0; 0; 0]); % 1 = definiert, 0 = frei
 
-% q_1(t) = deg2rad(0);
-q_2(t) = deg2rad(0);
-q_3(t) = deg2rad(90);
-q_4(t) = 1;
-q_5(t) = deg2rad(0);
-q_6(t) = deg2rad(0);
-q_7(t) = deg2rad(90);
-q_8(t) = deg2rad(90);
-q_9(t) = 0;
+
+%% Fällvorgang
+
+q_1(t) = deg2rad(20);
+q_2(t) = deg2rad(50);
+q_3(t) = deg2rad(-360-272);
+q_4(t) = 1.5;
+% % q_5(t) = deg2rad(0);
+% % q_6(t) = deg2rad(0);
+% % q_7(t) = deg2rad(90);
+% % q_8(t) = deg2rad(90);
+q_9(t) = 4.5;
 
 %% Ab hier muss nichts geändert werden
 
@@ -201,7 +204,7 @@ coordSys.BS_2 = coordSys.KS_10 + rotMat.T100*[-5; 0; 0];
 coordSys.sumBS = [coordSys.BS_1 coordSys.BS_2];
 
 %% Energien berechnen
-
+tic
 % Kinetische Energie (Translation)
 T_trans = simplify( ...
     0.5*dData.mass.m1*transpose(vcog.vSP_1_0)*vcog.vSP_1_0+...    % Body 1
@@ -214,9 +217,9 @@ T_trans = simplify( ...
     0.5*dData.mass.m8*transpose(vcog.vSP_8_0)*vcog.vSP_8_0+...    % Body 8
     0.5*dData.mass.m9*transpose(vcog.vSP_9_0)*vcog.vSP_9_0+...    % Body 9
     0.5*dData.mass.m10*transpose(vcog.vSP_10_0)*vcog.vSP_10_0);   % Body 10
-
+toc
 %% temp
-
+tic
 % Kinetische Energie (Rotation)
 
 % Notation: angVel.omega_a_b_c ^= angVel.omega von Körper a in Verhältnis zu Körper b im
@@ -246,7 +249,7 @@ angVel.omega_5_4_0 = rotMat.T40 * angVel.omega_5_4_4;
 angVel.omega_5_0_0 = simplify(angVel.omega_4_0_0 + angVel.omega_5_4_0);
 
 % Body 6 - Rotation um z_5
-angVel.omega_6_5_5 = [0; 0; diff(q_5(t), t)];
+angVel.omega_6_5_5 = [0; 0; simplify(diff(q_5(t), t))];
 angVel.omega_6_5_0 = rotMat.T50 * angVel.omega_6_5_5;
 angVel.omega_6_0_0 = simplify(angVel.omega_5_0_0 + angVel.omega_6_5_0);
 
@@ -282,6 +285,9 @@ dData.mMat.mm_8_0 = rotMat.T80 * dData.mMat.mm_8_8 * transpose(rotMat.T80);
 dData.mMat.mm_9_0 = rotMat.T90 * dData.mMat.mm_9_9 * transpose(rotMat.T90);
 dData.mMat.mm_10_0 =rotMat.T100 * dData.mMat.mm_10_10 * transpose(rotMat.T100);
 
+toc
+tic
+
 T_rot = simplify( ...
     1/2 * transpose(angVel.omega_1_0_0) * dData.mMat.mm_1_0 * angVel.omega_1_0_0 + ...  % Body 1
     1/2 * transpose(angVel.omega_2_0_0) * dData.mMat.mm_2_0 * angVel.omega_2_0_0 + ...  % Body 2
@@ -294,9 +300,12 @@ T_rot = simplify( ...
     1/2 * transpose(angVel.omega_9_0_0) * dData.mMat.mm_9_0 * angVel.omega_9_0_0 + ...  % Body 9
     1/2 * transpose(angVel.omega_10_0_0) * dData.mMat.mm_10_0 * angVel.omega_10_0_0);   % Body 10
 
+toc
 
 % Gesamte Kinetische Energie
 T = T_trans + T_rot;
+
+tic
 
 % Potentielle Energie V
 V = ...
@@ -310,6 +319,8 @@ V = ...
     dData.mass.m8*dData.g*cog.SP_8_0(2)+...   % Body 8
     dData.mass.m9*dData.g*cog.SP_9_0(2)+...   % Body 9
     dData.mass.m10*dData.g*cog.SP_10_0(2);    % Body 10
+
+toc
 
 %% Lagrangian Mechanics 
 % nur ausführbar, wenn alle Freiheitsgrade offen sind
@@ -349,7 +360,7 @@ if length(genCoord.qsFree) == 9
     % Function Handle -> ermöglicht das Einsetzen der Ergebnisvektoren 
     MnF.qFunHandle = matlabFunction(MnF.q_1, MnF.q_2, MnF.q_3, MnF.q_4, MnF.q_5, MnF.q_6, MnF.q_7, MnF.q_8, MnF.q_9);
 else
-    % läd die Bewegungsgleichung für Momente und Kräfte
+    % läd die Bewegungsgleichung mit allen Freiheitsgraden für Momente und Kräfte
     load('MnF.mat');
 end
 
@@ -404,20 +415,18 @@ if length(genCoord.qsFree) == 9
         0; 0; 0; 0; 0; 0; 0; 0; 0];
 else
     % Init für eingeschränkte Freiheitsgrade
-    %     simu.initCon = [deg2rad(0); deg2rad(320); deg2rad(15); deg2rad(130); deg2rad(197);...
-    %         deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0)];
-    simu.initCon = [deg2rad(0);...
-        deg2rad(0)];
+        simu.initCon = [deg2rad(-360-320); deg2rad(15); deg2rad(130); deg2rad(202);...
+            deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0)];
 end
 
-simu.timeInterv = [0 10];
+simu.timeInterv = [0 4];
 
 opt = odeset('Mass', MM, 'MaxStep', 1e-2);
 sol = ode45(FF, simu.timeInterv, simu.initCon, opt);
 clearvars opt 
 
 %% Ergebnisvektor erstellen
-plotData.nSteps = 200;
+plotData.nSteps = 100;
 plotData.dT = simu.timeInterv(2)/plotData.nSteps;
 plotData.time = linspace(sol.x(1),sol.x(end), plotData.nSteps);
 [plotData.devalY, plotData.devalYd] = deval(sol, plotData.time);
