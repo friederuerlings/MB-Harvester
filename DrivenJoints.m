@@ -20,13 +20,13 @@ time = linspace(0, 5, 1000);
 %     + heaviside(t-k2) * ka);
 
 drivenJoints.t = [0 1.5];
-drivenJoints.q1 = [0 -10];
+drivenJoints.q2 = [0 -10];
 
-% testQ1(t) = deg2rad((drivenJoints.q2(1) * heaviside(-t+drivenJoints.t(1))) ...
-%     + heaviside(t-drivenJoints.t(1)) * ((t-drivenJoints.t(1))*(drivenJoints.q2(2)-drivenJoints.q2(1))/(drivenJoints.t(2)-drivenJoints.t(1))+drivenJoints.q2(1)) * heaviside(-t+drivenJoints.t(2)) ...
-%     + heaviside(t-drivenJoints.t(2)) * drivenJoints.q2(2));
+testQ1(t) = deg2rad((drivenJoints.q2(1) * heaviside(-t+drivenJoints.t(1))) ...
+    + heaviside(t-drivenJoints.t(1)) * ((t-drivenJoints.t(1))*(drivenJoints.q2(2)-drivenJoints.q2(1))/(drivenJoints.t(2)-drivenJoints.t(1))+drivenJoints.q2(1)) * heaviside(-t+drivenJoints.t(2)) ...
+    + heaviside(t-drivenJoints.t(2)) * drivenJoints.q2(2));
 
-testQ1(t) = ((drivenJoints.q1(2)-drivenJoints.q1(1))/(drivenJoints.t(2)-drivenJoints.t(1)))*t + drivenJoints.q1(1);
+% testQ1(t) = ((drivenJoints.q1(2)-drivenJoints.q1(1))/(drivenJoints.t(2)-drivenJoints.t(1)))*t + drivenJoints.q1(1);
 
 testQ1d(t) = simplify(diff(testQ1, t));
 testQ1dd(t) = simplify(diff(testQ1d, t));
@@ -46,7 +46,7 @@ plot(time, testQ1(time), time, testQ1d(time), time, testQ1dd(time))
 % q_4(t) = deg2rad((drivenJoints.q4(1) * heaviside(-t+drivenJoints.t(1))) ...
 %     + heaviside(t-drivenJoints.t(1)) * ((t-drivenJoints.t(1))*(drivenJoints.q4(2)-drivenJoints.q4(1))/(drivenJoints.t(2)-drivenJoints.t(1))+drivenJoints.q4(1)) * heaviside(-t+drivenJoints.t(2)) ...
 %     + heaviside(t-drivenJoints.t(2)) * drivenJoints.q4(2));
-% q_9(t) = 4.2;
+% q_9(t) = 4.5;
 
 
 % drivenJoints.t = [0 1.5];
