@@ -14,14 +14,14 @@ genCoord.logiVec = logical([1; 1; 1; 1; 0; 0; 0; 0; 1]); % 1 = defined, 0 = free
 %% Setup definded q_n(t)
 
 q_1(t) = 0;
-q_2(t) = deg2rad(45);
-q_3(t) = deg2rad(-45);
-q_4(t) = 1.5;
+q_2(t) = 0;
+q_3(t) = 0;
+q_4(t) = 0;
 % % q_5(t) = deg2rad(0);
 % % q_6(t) = deg2rad(0);
 % % q_7(t) = deg2rad(90);
 % % q_8(t) = deg2rad(90);
-q_9(t) = 2;
+q_9(t) = 0;
 
 %% Start of Script
 
@@ -41,7 +41,7 @@ dData.x_J44 = 3;       % length of body 4
 dData.x_J66 = 0.3;     % length of body 6
 dData.x_J77 = 0.3;     % length of body 7
 dData.x_J88 = 1;       % length of body 8
-dData.x_J910 = 0;      % offset of tree
+dData.x_J99 = 0;       % offset of tree
 dData.g = 9.81;        % gravitational acceleration
 
 % Mass
@@ -137,7 +137,7 @@ joint.J5_5 = [0; 0; 0];
 joint.J6_6 = [dData.x_J66; 0; 0];
 joint.J7_7 = [dData.x_J77; 0; 0];
 joint.J8_8 = [dData.x_J88; 0; 0];
-joint.J10_9 = [dData.x_J910; 0; 0];
+joint.J9_9 = [dData.x_J99; 0; 0];
 
 %% Definition of COGs (in local CS)
 
@@ -164,7 +164,7 @@ coordSys.KS_6 = simplify(coordSys.KS_5+rotMat.T50*joint.J5_5);
 coordSys.KS_7 = simplify(coordSys.KS_6+rotMat.T60*joint.J6_6);
 coordSys.KS_8 = simplify(coordSys.KS_7+rotMat.T70*joint.J7_7);
 coordSys.KS_9 = simplify(coordSys.KS_8+rotMat.T80*joint.J8_8);
-coordSys.KS_10 = simplify(coordSys.KS_9+rotMat.T90*joint.J10_9+rotMat.T90*[q_9(t); 0; 0]);
+coordSys.KS_10 = simplify(coordSys.KS_9+rotMat.T90*joint.J9_9+rotMat.T90*[q_9(t); 0; 0]);
 
 % Coordinate Systems combined in one Vector, preperation for Plot
 syms temp
@@ -175,8 +175,8 @@ end
 clearvars n temp
 
 % COGs (Position) in Inertial-Frame
-cog.SP_1_0 = joint.J0_0+rotMat.T10*joint.J1_0+rotMat.T10*joint.J1_1+rotMat.T10*cog.SP1_1;
-cog.SP_2_0 = coordSys.KS_1+rotMat.T10*joint.J1_2+rotMat.T10*cog.SP2_2;
+cog.SP_1_0 = coordSys.KS_1+rotMat.T10*cog.SP1_1;
+cog.SP_2_0 = coordSys.KS_2+rotMat.T20*cog.SP2_2;
 cog.SP_3_0 = simplify(coordSys.KS_3+rotMat.T30*cog.SP3_3);
 cog.SP_4_0 = simplify(coordSys.KS_4+rotMat.T40*cog.SP4_4);
 cog.SP_5_0 = simplify(coordSys.KS_5+rotMat.T50*cog.SP5_5);
@@ -425,7 +425,7 @@ if length(genCoord.qsFree) == 9
         0; 0; 0; 0; 0; 0; 0; 0; 0];
 else
     % Init for free DOFs
-        simu.initCon = [deg2rad(360-90); deg2rad(0); deg2rad(45); deg2rad(225);...
+        simu.initCon = [deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0);...
             deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0)];
 end
 
@@ -508,27 +508,27 @@ vidPlot.Tree.XDataSource = 'CSPlotTree_X';
 vidPlot.Tree.YDataSource = 'CSPlotTree_Y';
 vidPlot.Tree.ZDataSource = 'CSPlotTree_Z';
 
-title('Harvester Process')
+title('0 Position')
 xlabel('x-Position (m)')
 ylabel('y-Position (m)')
 zlabel('z-Position (m)')
 % axis([-15 15 -15 15 0 15])
-% axis([-5 15 -15 15 0 15]) % ISO View
-axis([5 8 -2.5 2.5 0 3]) % Close Up 
+axis([-5 15 -15 15 0 5]) % ISO View
+% axis([5 8 -2.5 2.5 0 3]) % Close Up 
 
 % view(45, 45)
-% view(27, 15) % ISO Ansicht
-view(19, 24) % Close Up 1
+view(27, 15) % ISO Ansicht
+% view(19, 24) % Close Up 1
 % view(80, 17) % Close Up 2
 
-% set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,1000,500]) % Big
+set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,1000,500]) % Big
 % Frame
-set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,600,300]) % Small Frame
+% set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,600,300]) % Small Frame
 grid
 
 % for n = 1:1:length(plotData.y)
-for n = 1:1:68
-    % for n = 1:1:1
+% for n = 1:1:68
+for n = 1:1:1
     CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
     CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
 

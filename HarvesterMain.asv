@@ -14,14 +14,14 @@ genCoord.logiVec = logical([1; 1; 1; 1; 0; 0; 0; 0; 1]); % 1 = defined, 0 = free
 %% Setup definded q_n(t)
 
 q_1(t) = 0;
-q_2(t) = deg2rad(45);
-q_3(t) = deg2rad(-45);
-q_4(t) = 1.5;
+q_2(t) = 0;
+q_3(t) = 0;
+q_4(t) = 0;
 % % q_5(t) = deg2rad(0);
 % % q_6(t) = deg2rad(0);
 % % q_7(t) = deg2rad(90);
 % % q_8(t) = deg2rad(90);
-q_9(t) = 2;
+q_9(t) = 0;
 
 %% Start of Script
 
@@ -41,7 +41,7 @@ dData.x_J44 = 3;       % length of body 4
 dData.x_J66 = 0.3;     % length of body 6
 dData.x_J77 = 0.3;     % length of body 7
 dData.x_J88 = 1;       % length of body 8
-dData.x_J910 = 0;      % offset of tree
+dData.x_J99 = 0;      % offset of tree
 dData.g = 9.81;        % gravitational acceleration
 
 % Mass
@@ -137,7 +137,7 @@ joint.J5_5 = [0; 0; 0];
 joint.J6_6 = [dData.x_J66; 0; 0];
 joint.J7_7 = [dData.x_J77; 0; 0];
 joint.J8_8 = [dData.x_J88; 0; 0];
-joint.J10_9 = [dData.x_J910; 0; 0];
+joint.J9_9 = [dData.x_J99; 0; 0];
 
 %% Definition of COGs (in local CS)
 
@@ -156,7 +156,7 @@ cog.SP10_10 = [0; 0; 0];
 
 % Coordinate Systems (Position) in Inertial Frame
 coordSys.KS_1 = joint.J0_0+rotMat.T10*joint.J1_0+rotMat.T10*joint.J1_1;
-coordSys.KS_2 = coordSys.KS_1+rotMat.T10*joint.J1_2;
+coordSys.KS_2 = simplify(coordSys.KS_1+rotMat.T10*joint.J1_2);
 coordSys.KS_3 = simplify(coordSys.KS_2+rotMat.T20*joint.J2_2);
 coordSys.KS_4 = simplify(coordSys.KS_3+rotMat.T30*joint.J3_3);
 coordSys.KS_5 = simplify(coordSys.KS_4+rotMat.T40*joint.J4_4+rotMat.T40*[q_4(t); 0; 0]);
@@ -164,7 +164,7 @@ coordSys.KS_6 = simplify(coordSys.KS_5+rotMat.T50*joint.J5_5);
 coordSys.KS_7 = simplify(coordSys.KS_6+rotMat.T60*joint.J6_6);
 coordSys.KS_8 = simplify(coordSys.KS_7+rotMat.T70*joint.J7_7);
 coordSys.KS_9 = simplify(coordSys.KS_8+rotMat.T80*joint.J8_8);
-coordSys.KS_10 = simplify(coordSys.KS_9+rotMat.T90*joint.J10_9+rotMat.T90*[q_9(t); 0; 0]);
+coordSys.KS_10 = simplify(coordSys.KS_9+rotMat.T90*joint.J9_9+rotMat.T90*[q_9(t); 0; 0]);
 
 % Coordinate Systems combined in one Vector, preperation for Plot
 syms temp
@@ -175,8 +175,8 @@ end
 clearvars n temp
 
 % COGs (Position) in Inertial-Frame
-cog.SP_1_0 = joint.J0_0+rotMat.T10*joint.J1_0+rotMat.T10*joint.J1_1+rotMat.T10*cog.SP1_1;
-cog.SP_2_0 = coordSys.KS_1+rotMat.T10*joint.J1_2+rotMat.T10*cog.SP2_2;
+cog.SP_1_0 = simplify(coordSys.KS_1+rotMat.T10*cog.SP1_1);
+cog.SP_2_0 = simplify(coordSys.KS_2+rotMat.T10*cog.SP2_2);
 cog.SP_3_0 = simplify(coordSys.KS_3+rotMat.T30*cog.SP3_3);
 cog.SP_4_0 = simplify(coordSys.KS_4+rotMat.T40*cog.SP4_4);
 cog.SP_5_0 = simplify(coordSys.KS_5+rotMat.T50*cog.SP5_5);
@@ -338,11 +338,10 @@ L = T - V;
 
 % Damping d in each Joint
 dData.damping.all = [15000; 15000; 10000; 0; 2000; 2000; 1000; 5000; 0]; % Translatory-Joints q4, q9 without damping
-% Dämpfung für freie Gelenke definieren
+% Damping coefficients for free qs
 dData.damping.free = dData.damping.all(~genCoord.logiVec);
 
-% berechnet die Bewegungsgleichungen mit allen Freiheitsgraden (benötigt
-% für Momente und Kräfte)
+% Setup for EOMs with all DOFs
 if length(genCoord.qsFree) == 9 
 
     syms q1 q2 q3 q4 q5 q6 q7 q8 q9
@@ -354,10 +353,10 @@ if length(genCoord.qsFree) == 9
     MnF.qddVec = [q1dd; q2dd; q3dd; q4dd; q5dd; q6dd; q7dd; q8dd; q9dd];
 
     for n=1:9 %MFqn = (d/dt)(dL/dqnpkt)-(dL/dqn) + (dD/dqdt)
-        Dtemp = 0.5*dData.damping.all(n)*(diff(genCoord.qsTotal(n), t))^2; % Dissipationsfunktion für Dämpfung Dn = 1/2 * dn * |vrel|²
+        Dtemp = 0.5*dData.damping.all(n)*(diff(genCoord.qsTotal(n), t))^2; % dissipation function for damping Dn = 1/2 * dn * |vrel|²
         MnF.(strcat('q_', num2str(n))) = diff(L, diff(genCoord.qsTotal(n), t), t) - diff(L, genCoord.qsTotal(n)) + ...
             diff(Dtemp, diff(genCoord.qsTotal(n), t));
-        for i=1:9   % substituiert diff(q_n, t, t) => qndd; diff(q_n, t) => qnd; q_n => qn / wird später zum Einsetzen benötigt
+        for i=1:9   % substitute diff(q_n, t, t) => qndd; diff(q_n, t) => qnd; q_n => qn / needed for subs command later
             MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t, t), MnF.qddVec(i));
             MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), diff(genCoord.qsTotal(i), t), MnF.qdVec(i));
             MnF.(strcat('q_', num2str(n))) = subs(MnF.(strcat('q_', num2str(n))), genCoord.qsTotal(i), MnF.qVec(i));
@@ -366,17 +365,17 @@ if length(genCoord.qsFree) == 9
 
     clearvars n i q1 q2 q3 q4 q5 q6 q7 q8 q9 q1d q2d q3d q4d q5d q6d q7d q8d q9d q1dd q2dd q3dd q4dd q5dd q6dd q7dd q8dd q9dd Dtemp
 
-    % Function Handle -> ermöglicht das Einsetzen der Ergebnisvektoren 
+    % Function Handle
     MnF.qFunHandle = matlabFunction(MnF.q_1, MnF.q_2, MnF.q_3, MnF.q_4, MnF.q_5, MnF.q_6, MnF.q_7, MnF.q_8, MnF.q_9);
 else
-    % läd die Bewegungsgleichung mit allen Freiheitsgraden für Momente und Kräfte
+    % loads the EOMs with all DOFs, needed for moments and forces
     load('MnF.mat');
 end
 
 
-%% Lagrangian Mechanics (mit eingeschränkten Freiheitsgraden)
+%% Lagrangian Mechanics (with definied DOFs)
 
-% Partielle Ableitungen berechnen
+% Partial derivative
 for n=1:length(genCoord.qsFree)
     dqdt(n) = diff(genCoord.qsFree(n), t);
     dLdq(n) = diff(L, genCoord.qsFree(n));
@@ -385,7 +384,7 @@ for n=1:length(genCoord.qsFree)
 end
 clearvars n
 
-% Dämpfungsterm
+% Damping
 for n=1:length(genCoord.qsFree)
     D(n) = 0.5*dData.damping.free(n)*(dqdt(n)^2); % Dn = 1/2 * dn * |vrel|²
     dDdqp(n) = diff(D(n), dqdt(n));
@@ -421,12 +420,12 @@ disp("EOM Vorbereitung durchgeführt")
 %% Simulation
 
 if length(genCoord.qsFree) == 9
-    % Init für alle Freiheitsgrade
+    % Init for all DOFs
     simu.initCon = [deg2rad(0); deg2rad(45); deg2rad(-45); 1; deg2rad(-90); deg2rad(0); deg2rad(0); deg2rad(0); 0; ...
         0; 0; 0; 0; 0; 0; 0; 0; 0];
 else
-    % Init für eingeschränkte Freiheitsgrade
-        simu.initCon = [deg2rad(360-90); deg2rad(0); deg2rad(45); deg2rad(225);...
+    % Init for free DOFs
+        simu.initCon = [deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0);...
             deg2rad(0); deg2rad(0); deg2rad(0); deg2rad(0)];
 end
 
@@ -438,7 +437,7 @@ clearvars opt
 
 disp("Simulation abgeschlossen")
 
-%% Ergebnisvektor erstellen
+%% Combine ode results and pre-defined qs
 plotData.nSteps = 100;
 plotData.dT = simu.timeInterv(2)/plotData.nSteps;
 plotData.time = linspace(sol.x(1),sol.x(end), plotData.nSteps);
@@ -447,7 +446,6 @@ plotData.time = linspace(sol.x(1),sol.x(end), plotData.nSteps);
 plotData.devalY = transpose(plotData.devalY);
 plotData.devalYd = transpose(plotData.devalYd);
 
-% Ergebnisvektor erstellen
 qFreeCount = 1;
 qDefinedCount = 1;
 
@@ -457,7 +455,7 @@ plotData.ydd =  zeros(plotData.nSteps, 9);
 
 for n=1:9
     switch genCoord.logiVec(n)
-        case 1  % Ergebnisvektor mit definiertem q beschreiben
+        case 1  % pre-defined qs
             syms qTemp(t) qdTemp(t) qddTemp(t)
             qTemp(t) = genCoord.qsDefined(qDefinedCount);
             plotData.y(:,n) = [qTemp(plotData.time)]';  % q
@@ -467,7 +465,7 @@ for n=1:9
             plotData.ydd(:,n) = [qddTemp(plotData.time)]'; % qdotdot
             qDefinedCount = qDefinedCount + 1;
 
-        case 0  % Ergebnisvektor mit ode-Ergebnis beschreiben
+        case 0  % ode calculated qs
             plotData.y(:,n) = plotData.devalY(:,qFreeCount);  % q
             plotData.yd(:,n) = plotData.devalY(:,qFreeCount+length(genCoord.qsFree));    % qdot
             plotData.ydd(:,n) = plotData.devalYd(:,qFreeCount+length(genCoord.qsFree));   % qdotdot
@@ -478,8 +476,7 @@ clearvars qFreeCount qDefinedCount qTemp qDotTemp n
 
 %% Joint Torque and Forces
 
-% Einsetzen der Ergebnisse (y, yd, ydd) in Bewegungsgleichung mit allen Freiheitsgraden 
-% zur Berechnung der Momente und Kräfte in Gelenken
+% Insert results (y, yd, ydd) in EOMs with all DOFs
 [q1MF, q2MF, q3MF, q4MF, q5MF, q6MF, q7MF, q8MF, q9MF] = ...
     MnF.qFunHandle(plotData.y(:,1),plotData.y(:,2), plotData.y(:,3), plotData.y(:,4), plotData.y(:,5), plotData.y(:,6), plotData.y(:,7), plotData.y(:,8), plotData.y(:,9), ...
     plotData.yd(:,1),plotData.yd(:,2),plotData.yd(:,3),plotData.yd(:,4),plotData.yd(:,5),plotData.yd(:,6),plotData.yd(:,7),plotData.yd(:,8),plotData.yd(:,9), ...
@@ -492,12 +489,12 @@ tic;
 
 figure('Name', 'Update Plot')
 
-% Start Conditions für Harvester
+% Start Conditions
 plotData.subsVec = [q_1(t) q_2(t) q_3(t) q_4(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t) t];
 CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
 CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
 
-% XYZ definieren für Harvester Plot
+% define XYZ for harvester plot
 vidPlot.Harv = plot3(CSPlotHarvTemp(1),CSPlotHarvTemp(3),CSPlotHarvTemp(2),'-o');
 vidPlot.Harv.XDataSource = 'CSPlotHarv_X';
 vidPlot.Harv.YDataSource = 'CSPlotHarv_Y';
@@ -505,33 +502,33 @@ vidPlot.Harv.ZDataSource = 'CSPlotHarv_Z';
 
 hold on
 
-% XYZ definieren für Tree Plot
+% define XYZ for tree plot
 vidPlot.Tree = plot3(CSPlotTreeTemp(1),CSPlotTreeTemp(3),CSPlotTreeTemp(2),'-o');
 vidPlot.Tree.XDataSource = 'CSPlotTree_X';
 vidPlot.Tree.YDataSource = 'CSPlotTree_Y';
 vidPlot.Tree.ZDataSource = 'CSPlotTree_Z';
 
-title('Harvester Process')
+title('0 Position')
 xlabel('x-Position (m)')
 ylabel('y-Position (m)')
 zlabel('z-Position (m)')
 % axis([-15 15 -15 15 0 15])
-% axis([-5 15 -15 15 0 15]) % ISO Ansicht
-axis([5 8 -2.5 2.5 0 3]) % Close Up 
+axis([-5 15 -15 15 0 5]) % ISO View
+% axis([5 8 -2.5 2.5 0 3]) % Close Up 
 
 % view(45, 45)
-% view(27, 15) % ISO Ansicht
-view(19, 24) % Close Up 1
+view(27, 15) % ISO Ansicht
+% view(19, 24) % Close Up 1
 % view(80, 17) % Close Up 2
 
-% set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,1000,500]) % Großer
+set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,1000,500]) % Big
 % Frame
-set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,600,300]) % Kleiner Frame
+% set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,600,300]) % Small Frame
 grid
 
 % for n = 1:1:length(plotData.y)
-for n = 1:1:68
-    % for n = 1:1:1
+% for n = 1:1:68
+for n = 1:1:1
     CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
     CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
 
