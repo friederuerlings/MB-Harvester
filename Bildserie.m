@@ -1,6 +1,6 @@
 %% Bildserie
 
-Subplot_Groese = [4 3];
+Subplot_Groese = [5 4];
 
 %% Subplot
 
@@ -16,8 +16,6 @@ for o = 1:1:length(Bilder)
     subplot(Subplot_Groese(1),Subplot_Groese(2),o)
 
     plotData.subsVec = [q_1(t) q_2(t) q_3(t) q_4(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t) t];
-    CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
-    CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
 
     % define XYZ for harvester plot
     CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
