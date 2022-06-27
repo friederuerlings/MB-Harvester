@@ -1,6 +1,6 @@
 %% Bildserie
 
-Subplot_Groese = [5 4];
+Subplot_Groese = [4 3];
 
 %% Subplot
 
@@ -24,6 +24,8 @@ for o = 1:1:length(Bilder)
     hold on
     plot3(CSPlotTreeTemp(1,:),CSPlotTreeTemp(3,:),CSPlotTreeTemp(2,:),'-o');
 
+    time = round(plotData.time(n)*10)/10;
+    title(strcat('t =', 32, num2str(time), 32, 's'))
 
     % axis([-15 15 -15 15 0 15])
     axis([-5 15 -15 15 0 12]) % ISO View
