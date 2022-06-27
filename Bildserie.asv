@@ -1,0 +1,63 @@
+%% Bildserie
+tic;
+
+figure('Name', 'Bildserie')
+
+Bilder = [1 8 16 24 32 40 48 56 68];
+
+for o = 1:1:9
+
+    n = Bilder(o);
+
+    subplot(3,3,o)
+
+    % Start Conditions
+    plotData.subsVec = [q_1(t) q_2(t) q_3(t) q_4(t) q_5(t) q_6(t) q_7(t) q_8(t) q_9(t) t];
+    CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
+    CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(1,1:9) plotData.time(1)]);
+
+    % define XYZ for harvester plot
+        CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
+    CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
+    vidPlot.Harv = plot3(CSPlotHarvTemp(1,:),CSPlotHarvTemp(3,:),CSPlotHarvTemp(2,:),'-o');
+    vidPlot.Harv.XDataSource = 'CSPlotHarv_X';
+    vidPlot.Harv.YDataSource = 'CSPlotHarv_Y';
+    vidPlot.Harv.ZDataSource = 'CSPlotHarv_Z';
+
+    hold on
+
+    % define XYZ for tree plot
+    vidPlot.Tree = plot3(CSPlotTreeTemp(1),CSPlotTreeTemp(3),CSPlotTreeTemp(2),'-o');
+    vidPlot.Tree.XDataSource = 'CSPlotTree_X';
+    vidPlot.Tree.YDataSource = 'CSPlotTree_Y';
+    vidPlot.Tree.ZDataSource = 'CSPlotTree_Z';
+
+    % axis([-15 15 -15 15 0 15])
+    axis([-5 15 -15 15 0 12]) % ISO View
+    % axis([5 8 -2.5 2.5 0 3]) % Close Up
+
+    view(27, 15) % ISO Ansicht
+    % view(19, 24) % Close Up 1
+    % view(80, 17) % Close Up 2
+
+    %     set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,1000,500]) % Big
+    % Frame
+    set(gcf,'DefaultTextFontSize', 12, 'position',[50,50,600,300]) % Small Frame
+    grid
+
+    CSPlotHarvTemp = subs(coordSys.sumKS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
+    CSPlotTreeTemp = subs(coordSys.sumBS, plotData.subsVec, [plotData.y(n,1:9) plotData.time(n)]);
+
+    CSPlotHarv_X = CSPlotHarvTemp(1,:);
+    CSPlotHarv_Y = CSPlotHarvTemp(3,:);
+    CSPlotHarv_Z = CSPlotHarvTemp(2,:);
+
+    CSPlotTree_X = CSPlotTreeTemp(1,:);
+    CSPlotTree_Y = CSPlotTreeTemp(3,:);
+    CSPlotTree_Z = CSPlotTreeTemp(2,:);
+
+end
+
+
+clearvars n CSPlotHarv_X CSPlotHarv_Y CSPlotHarv_Z CSPlotTree_X CSPlotTree_Y CSPlotTree_Z ...
+    CSPlotHarvTemp CSPlotTreeTemp

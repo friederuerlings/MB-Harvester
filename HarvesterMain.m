@@ -17,10 +17,10 @@ q_1(t) = 0;
 q_2(t) = 0;
 q_3(t) = 0;
 q_4(t) = 0;
-% % q_5(t) = deg2rad(0);
-% % q_6(t) = deg2rad(0);
-% % q_7(t) = deg2rad(90);
-% % q_8(t) = deg2rad(90);
+% q_5(t) = deg2rad(0);
+% q_6(t) = deg2rad(0);
+% q_7(t) = deg2rad(90);
+% q_8(t) = deg2rad(90);
 q_9(t) = 0;
 
 %% Start of Script
